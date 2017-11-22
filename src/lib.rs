@@ -109,6 +109,7 @@ macro_rules! _declare_module_impl {
       $cmds:expr,
       $register_hooks:expr
    ) => {
+      #[allow(non_upper_case_globals)]
       #[allow(unused_unsafe)]
       #[no_mangle]
       pub static mut $module: $crate::ffi::module = $crate::ffi::module {
@@ -130,7 +131,7 @@ macro_rules! _declare_module_impl {
    }
 }
 
-
+#[allow(non_upper_case_globals)]
 #[macro_export]
 macro_rules! _declare_config_struct {
    ($name:ident, {}) => {};
@@ -623,6 +624,7 @@ macro_rules! _declare_directive_array {
    };
 
    ($directives_name:ident, [ ]) => {
+      #[allow(non_upper_case_globals)]
       static mut $directives_name: [$crate::ffi::command_rec; 1] = [
          _null_command_rec!()
       ];
@@ -661,6 +663,7 @@ macro_rules! _declare_directive_array {
    };
 
    ($directives_name:ident, $cmd_count:expr, [ $($cmd:tt),* ]) => {
+      #[allow(non_upper_case_globals)]
       static mut $directives_name: [$crate::ffi::command_rec; $cmd_count] = [
          $( _declare_command_rec!($cmd) ),*,
          _null_command_rec!()
@@ -835,6 +838,10 @@ macro_rules! _declare_single_handler_wrapper {
       _declare_hook_handler_wrapper!($handler, $order);
    };
 
+   (( $handler:ident, child_init, $order:expr )) => {
+      _declare_hook_child_init_wrapper!($handler, $order);
+   };
+
    (( $handler:ident, post_config, $order:expr )) => {
       _declare_hook_post_config_wrapper!($handler, $order);
    }
@@ -852,6 +859,28 @@ macro_rules! _declare_hook_handler_wrapper {
                   Ok(status) => status,
                   Err(_) => $crate::httpd::Status::HTTP_INTERNAL_SERVER_ERROR
                }.into()
+            }
+         }
+      }
+   }
+}
+
+
+#[macro_export]
+macro_rules! _declare_hook_child_init_wrapper {
+   ($handler:ident, $order:expr) => {
+      interpolate_idents! {
+         extern "C" fn [c_ $handler](p: *mut $crate::ffi::apr_pool_t, s: *mut $crate::ffi::server_rec)  {
+            match $crate::Pool::from_raw(p) {
+               None => { }//todo: log here}
+               Some(mut pool) => {
+                  match $crate::Server::from_raw(s) {
+                     None => { /* todo: log here */ },
+                     Some(mut sr) => {
+                        $handler(&mut pool, &mut sr);
+                     }
+                  }
+               }
             }
          }
       }

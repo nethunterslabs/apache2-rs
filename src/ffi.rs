@@ -779,6 +779,7 @@ pub type hook_pre_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr
 pub type hook_check_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr_pool_t, temp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_test_config_fn = extern "C" fn(conf: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_post_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr_pool_t, temp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
+pub type hook_child_init_fn = extern "C" fn(p: *mut apr_pool_t, s: *mut server_rec);
 
 
 extern "C" {
@@ -830,16 +831,17 @@ extern "C" {
    pub fn ap_hook_pre_config(f: Option<hook_pre_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_check_config(f: Option<hook_check_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_test_config(f: Option<hook_test_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_post_config(f: Option<hook_post_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_create_request(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_translate_name(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_map_to_storage(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_check_user_id(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_fixups(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_type_checker(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_access_checker(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_access_checker_ex(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_auth_checker(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_post_config(        f: Option<hook_post_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_create_request(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_translate_name(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_map_to_storage(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_check_user_id(      f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_fixups(             f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_type_checker(       f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_access_checker(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_access_checker_ex(  f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_auth_checker(       f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_insert_error_filter(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_log_transaction(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_child_init(         f: Option<hook_child_init_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 }
