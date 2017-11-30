@@ -67,6 +67,7 @@ macro_rules! bool_getter {
    }
 }
 
+#[derive(Debug)]
 pub enum Status {
    // non-HTTP status codes returned by hooks
    OK,            // Module has handled this stage.
@@ -664,8 +665,18 @@ pub type Server = Wrapper<ffi::server_rec>;
 
 impl Server {
    option_getter!(module_config, ConfVector);
+   option_getter!(process, Process);
 }
 
+
+pub type Process = Wrapper<ffi::process_rec>;
+
+impl Process {
+   option_getter!(pool, APRPool);
+
+}
+
+pub type APRPool = Wrapper<ffi::apr_pool_t>;
 
 pub type CmdParms = Wrapper<ffi::cmd_parms>;
 

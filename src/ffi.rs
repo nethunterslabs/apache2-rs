@@ -234,6 +234,7 @@ extern "C" {
    pub fn apr_table_get(t: *const apr_table_t, key: *const c_char) -> *const c_char;
    pub fn apr_table_set(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
    pub fn apr_table_add(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
+   pub fn apr_table_do(f: *mut ap_table_do_callback_fb, r: *mut c_void, table: * const apr_table_t, ...) -> c_int;
 
    pub fn apr_table_elts(t: *const apr_table_t) -> *const apr_array_header_t;
 
@@ -780,6 +781,8 @@ pub type hook_check_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut a
 pub type hook_test_config_fn = extern "C" fn(conf: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_post_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr_pool_t, temp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_child_init_fn = extern "C" fn(p: *mut apr_pool_t, s: *mut server_rec);
+
+pub type ap_table_do_callback_fb = extern "C" fn(r: *mut request_rec, key: *const c_char, value: *const c_char) -> c_int;
 
 
 extern "C" {
