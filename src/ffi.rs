@@ -784,6 +784,11 @@ pub type hook_child_init_fn = extern "C" fn(p: *mut apr_pool_t, s: *mut server_r
 
 pub type ap_table_do_callback_fb = extern "C" fn(r: *mut request_rec, key: *const c_char, value: *const c_char) -> c_int;
 
+extern "C" {
+   #[no_mangle]
+   #[allow(non_upper_case_globals)]
+   pub static ap_server_root: *const c_char;
+}
 
 extern "C" {
    pub fn ap_get_server_banner() -> *const c_char;

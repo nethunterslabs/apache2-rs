@@ -666,6 +666,7 @@ pub type Server = Wrapper<ffi::server_rec>;
 impl Server {
    option_getter!(module_config, ConfVector);
    option_getter!(process, Process);
+   str_getter!(path);
 }
 
 
