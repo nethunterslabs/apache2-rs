@@ -73,9 +73,9 @@ pub enum Status {
    OK,            // Module has handled this stage.
    DECLINED,      // Module declines to handle
    DONE,          // Module has served the response completely
-                  // - it's safe to die() with no more output
+   // - it's safe to die() with no more output
    SUSPENDED,     // Module will handle the remainder of the request.
-                  // The core will never invoke the request again,
+   // The core will never invoke the request again,
 
    HTTP_CONTINUE,
    HTTP_SWITCHING_PROTOCOLS,
@@ -565,7 +565,7 @@ impl Request {
 
       unsafe {
          ffi::ap_cookie_write(self.ptr, c_str_name, c_str_val, c_str_attrs, 0,
-            field!(self, headers_out), null);
+                              field!(self, headers_out), null);
       }
    }
 

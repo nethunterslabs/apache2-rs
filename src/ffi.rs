@@ -167,7 +167,7 @@ pub struct apr_sockaddr_t {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct apr_sockaddr_sa_t {
-    pub _bindgen_data_: [u64; 16usize],
+   pub _bindgen_data_: [u64; 16usize],
 }
 impl apr_sockaddr_sa_t {
    pub unsafe fn sin(&mut self) -> *mut sockaddr_in {
@@ -715,7 +715,7 @@ pub struct ap_filter_rec_t {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ap_filter_func {
-    pub _bindgen_data_: [u64; 1usize],
+   pub _bindgen_data_: [u64; 1usize],
 }
 impl ap_filter_func {
    pub unsafe fn out_func(&mut self) -> *mut Option<ap_out_filter_func> {
@@ -742,7 +742,7 @@ pub type ap_filter_type = c_uint;
 
 pub type ap_input_mode_t = c_uint;
 
-pub type ap_init_filter_func = extern "C" fn(f: *mut ap_filter_t) -> c_int;
+pub type ap_init_filter_func = extern "C" fn(f: *mut ap_filter_t) -> apr_status_t;
 
 pub type ap_out_filter_func = extern "C" fn(
    f: *mut ap_filter_t,
@@ -781,6 +781,7 @@ pub type hook_check_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut a
 pub type hook_test_config_fn = extern "C" fn(conf: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_post_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr_pool_t, temp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_child_init_fn = extern "C" fn(p: *mut apr_pool_t, s: *mut server_rec);
+pub type hook_insert_output_filter = extern "C" fn(r: *mut request_rec);
 
 pub type ap_table_do_callback_fb = extern "C" fn(r: *mut request_rec, key: *const c_char, value: *const c_char) -> c_int;
 
@@ -852,4 +853,11 @@ extern "C" {
    pub fn ap_hook_insert_error_filter(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_log_transaction(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_child_init(         f: Option<hook_child_init_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+
+   pub fn ap_register_output_filter(name: *const c_char, filter_fn: Option<ap_out_filter_func>, init_fn: Option<ap_init_filter_func>, filter_type: ap_filter_type) -> *const ap_filter_rec_t;
+   pub fn ap_hook_insert_filter(f: Option<hook_insert_output_filter>, pre: *const *const c_char,succ: *const *const c_char, order: c_int);
+   pub fn ap_add_output_filter(name: *const c_char, ctx: *const c_void, r: *mut request_rec, c: *mut conn_rec) -> *mut ap_filter_t;
+   pub fn ap_pass_brigade(next: *mut ap_filter_t, bb: *mut apr_bucket_brigade) -> apr_status_t;
+//(ap_filter_t *) ap_add_output_filter(const char *name, void *ctx,
+//request_rec *r, conn_rec *c)
 }
