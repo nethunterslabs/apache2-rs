@@ -255,11 +255,7 @@ pub fn strdup<T: Into<Vec<u8>>>(pool: *mut apr_pool_t, data: T) -> *mut c_char {
    let bytes = data.into();
 
    unsafe {
-      apr_pstrmemdup(
-         pool,
-         bytes.as_ptr() as *const c_char,
-         bytes.len() as apr_size_t
-      )
+      apr_pstrmemdup(pool,        bytes.as_ptr() as *const c_char,bytes.len() as apr_size_t)
    }
 }
 
@@ -575,11 +571,31 @@ impl cmd_func {
 #[derive(Copy, Clone)]
 pub struct command_rec {
    pub name: *const c_char,
-   pub func: cmd_func,
+   pub func: cmd_func2,
    pub cmd_data: *mut c_void,
    pub req_override: c_int,
    pub args_how: cmd_how,
    pub errmsg: *const c_char,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union cmd_func2 {
+   /// function to call for a no-args
+   pub no_args: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void) -> *const c_char>,
+   /// function to call for a raw-args
+   pub raw_args: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, args: *const c_char) -> *const c_char>,
+   /// function to call for a argv/argc
+   pub take_argv: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, argc: c_int, argv: *const *const c_char) -> *const c_char>,
+   /// function to call for a take1
+   pub take1: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, w: *const c_char) -> *const c_char>,
+   /// function to call for a take2
+   pub take2: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, w: *const c_char, w2: *const c_char) -> *const c_char>,
+   /// function to call for a take3
+   pub take3: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, w: *const c_char, w2: *const c_char, w3: *const c_char) -> *const c_char>,
+   /// function to call for a flag
+   pub flag: Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut c_void, on: c_int) -> *const c_char>,
+   _bindgen_union_align: u64,
 }
 
 
@@ -861,4 +877,10 @@ extern "C" {
    pub fn ap_pass_brigade(next: *mut ap_filter_t, bb: *mut apr_bucket_brigade) -> apr_status_t;
 //(ap_filter_t *) ap_add_output_filter(const char *name, void *ctx,
 //request_rec *r, conn_rec *c)
+}
+
+pub fn apr_table_elts_local(t: *const apr_table_t) -> *const apr_array_header_t {
+   unsafe {
+      ::std::mem::transmute(t)
+   }
 }

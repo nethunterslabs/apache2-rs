@@ -67,7 +67,7 @@ macro_rules! bool_getter {
    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Status {
    // non-HTTP status codes returned by hooks
    OK,            // Module has handled this stage.
