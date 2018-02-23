@@ -1,5 +1,5 @@
-#![feature(plugin)]
-#![plugin(interpolate_idents)]
+//#![feature(plugin)]
+//#![plugin(interpolate_idents)]
 
 extern crate libc;
 
@@ -43,7 +43,7 @@ macro_rules! get {
    })
 }
 
-
+/*
 #[macro_export]
 macro_rules! apache2_module {
    ($name:ident, $mod_name:expr) => {
@@ -910,3 +910,4 @@ macro_rules! _declare_hook_post_config_wrapper {
       }
    }
 }
+*/
