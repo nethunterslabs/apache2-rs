@@ -695,46 +695,46 @@ pub type Module = Wrapper<ffi::module>;
 pub type ConfVector = Wrapper<ffi::ap_conf_vector_t>;
 
 
-pub type ListProviderGroup = Wrapper<ffi::ap_list_provider_groups_t>;
+//pub type ListProviderGroup = Wrapper<ffi::ap_list_provider_groups_t>;
+//
+//
+//impl ListProviderGroup {
+//   str_getter!(provider_group);
+//
+//   str_getter!(provider_version);
+//}
 
 
-impl ListProviderGroup {
-   str_getter!(provider_group);
-
-   str_getter!(provider_version);
-}
-
-
-pub type ListProviderName = Wrapper<ffi::ap_list_provider_names_t>;
+//pub type ListProviderName = Wrapper<ffi::ap_list_provider_names_t>;
+//
+//
+//impl ListProviderName {
+//   str_getter!(provider_name);
+//}
 
 
-impl ListProviderName {
-   str_getter!(provider_name);
-}
+//pub fn list_provider_groups(pool: &mut Pool) -> ArrayHeaderIter<ListProviderGroup> {
+//   let ptr = unsafe { ffi::ap_list_provider_groups(pool.ptr) };
+//
+//   ArrayHeaderIter::<ListProviderGroup> {
+//      phantom: PhantomData,
+//      array_header: ptr,
+//      next_idx: 0
+//   }
+//}
 
-
-pub fn list_provider_groups(pool: &mut Pool) -> ArrayHeaderIter<ListProviderGroup> {
-   let ptr = unsafe { ffi::ap_list_provider_groups(pool.ptr) };
-
-   ArrayHeaderIter::<ListProviderGroup> {
-      phantom: PhantomData,
-      array_header: ptr,
-      next_idx: 0
-   }
-}
-
-pub fn list_provider_names<T: Into<Vec<u8>>>(pool: &mut Pool, provider_group: T, provider_version: T) -> ArrayHeaderIter<ListProviderName> {
-   let provider_group = ffi::strdup(pool.ptr, provider_group);
-   let provider_version = ffi::strdup(pool.ptr, provider_version);
-
-   let ptr = unsafe { ffi::ap_list_provider_names(pool.ptr, provider_group, provider_version) };
-
-   ArrayHeaderIter::<ListProviderName> {
-      phantom: PhantomData,
-      array_header: ptr,
-      next_idx: 0
-   }
-}
+//pub fn list_provider_names<T: Into<Vec<u8>>>(pool: &mut Pool, provider_group: T, provider_version: T) -> ArrayHeaderIter<ListProviderName> {
+//   let provider_group = ffi::strdup(pool.ptr, provider_group);
+//   let provider_version = ffi::strdup(pool.ptr, provider_version);
+//
+//   let ptr = unsafe { ffi::ap_list_provider_names(pool.ptr, provider_group, provider_version) };
+//
+//   ArrayHeaderIter::<ListProviderName> {
+//      phantom: PhantomData,
+//      array_header: ptr,
+//      next_idx: 0
+//   }
+//}
 
 pub fn server_banner<'a>() -> Option<&'a str> {
    from_char_ptr(

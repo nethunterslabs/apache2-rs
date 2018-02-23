@@ -620,18 +620,18 @@ pub struct cmd_parms {
    pub err_directive: *const ap_directive_t,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_list_provider_names_t {
-   pub provider_name: *const c_char,
-}
+//#[repr(C)]
+//#[derive(Copy, Clone)]
+//pub struct ap_list_provider_names_t {
+//   pub provider_name: *const c_char,
+//}
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_list_provider_groups_t {
-   pub provider_group: *const c_char,
-   pub provider_version: *const c_char,
-}
+//#[repr(C)]
+//#[derive(Copy, Clone)]
+//pub struct ap_list_provider_groups_t {
+//   pub provider_group: *const c_char,
+//   pub provider_version: *const c_char,
+//}
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -849,8 +849,8 @@ extern "C" {
 
    pub fn ap_register_provider(pool: *mut apr_pool_t, provider_group: *const c_char, provider_name: *const c_char, provider_version: *const c_char, provider: *const c_void) -> apr_status_t;
    pub fn ap_lookup_provider(provider_group: *const c_char, provider_name: *const c_char, provider_version: *const c_char) -> *mut c_void;
-   pub fn ap_list_provider_names(pool: *mut apr_pool_t, provider_group: *const c_char, provider_version: *const c_char) -> *mut apr_array_header_t;
-   pub fn ap_list_provider_groups(pool: *mut apr_pool_t) -> *mut apr_array_header_t;
+//   pub fn ap_list_provider_names(pool: *mut apr_pool_t, provider_group: *const c_char, provider_version: *const c_char) -> *mut apr_array_header_t;
+//   pub fn ap_list_provider_groups(pool: *mut apr_pool_t) -> *mut apr_array_header_t;
 
    pub fn ap_hook_handler(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_pre_config(f: Option<hook_pre_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
