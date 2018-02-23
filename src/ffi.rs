@@ -821,7 +821,7 @@ extern "C" {
    pub fn ap_get_basic_auth_pw(r: *const request_rec, pw: *mut *const c_char) -> c_int;
 
    pub fn ap_context_document_root(r: *const request_rec) -> *const c_char;
-   pub fn ap_context_prefix(r: *const request_rec) -> *const c_char;
+   //pub fn ap_context_prefix(r: *const request_rec) -> *const c_char;
 
    pub fn ap_run_http_scheme(r: *const request_rec) -> *const c_char;
    pub fn ap_run_default_port(r: *const request_rec) -> apr_port_t;

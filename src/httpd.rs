@@ -521,11 +521,11 @@ impl Request {
       )
    }
 
-   pub fn context_prefix<'a>(&self) -> Option<&'a str> {
-      from_char_ptr(
-         unsafe { ffi::ap_context_prefix(self.ptr) }
-      )
-   }
+//   pub fn context_prefix<'a>(&self) -> Option<&'a str> {
+//      from_char_ptr(
+//         unsafe { ffi::ap_context_prefix(self.ptr) }
+//      )
+//   }
 
    pub fn http_scheme<'a>(&self) -> Option<&'a str> {
       from_char_ptr(
