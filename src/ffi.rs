@@ -820,7 +820,7 @@ extern "C" {
    pub fn ap_set_content_type(r: *const request_rec, ct: *const c_char) -> ();
    pub fn ap_get_basic_auth_pw(r: *const request_rec, pw: *mut *const c_char) -> c_int;
 
-   pub fn ap_context_document_root(r: *const request_rec) -> *const c_char;
+   //pub fn ap_context_document_root(r: *const request_rec) -> *const c_char;
    //pub fn ap_context_prefix(r: *const request_rec) -> *const c_char;
 
    pub fn ap_run_http_scheme(r: *const request_rec) -> *const c_char;
@@ -830,11 +830,11 @@ extern "C" {
 
    pub fn ap_some_auth_required(r: *const request_rec) -> c_int;
 
-   pub fn ap_cookie_read(r: *const request_rec, name: *const c_char, val: *mut *const c_char, remove: c_int) -> apr_status_t;
-   pub fn ap_cookie_write(r: *const request_rec, name: *const c_char, val: *const c_char, attrs: *const c_char, maxage: c_int, ...) -> apr_status_t;
+   //pub fn ap_cookie_read(r: *const request_rec, name: *const c_char, val: *mut *const c_char, remove: c_int) -> apr_status_t;
+   //pub fn ap_cookie_write(r: *const request_rec, name: *const c_char, val: *const c_char, attrs: *const c_char, maxage: c_int, ...) -> apr_status_t;
 
-   pub fn ap_escape_urlencoded(p: *mut apr_pool_t, s: *const c_char) -> *mut c_char;
-   pub fn ap_unescape_urlencoded(query: *mut c_char) -> c_int;
+   //pub fn ap_escape_urlencoded(p: *mut apr_pool_t, s: *const c_char) -> *mut c_char;
+   //pub fn ap_unescape_urlencoded(query: *mut c_char) -> c_int;
 
    pub fn ap_document_root(r: *const request_rec) -> *const c_char;
    pub fn ap_get_server_name(r: *const request_rec) -> *const c_char;
@@ -854,7 +854,7 @@ extern "C" {
 
    pub fn ap_hook_handler(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_pre_config(f: Option<hook_pre_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_check_config(f: Option<hook_check_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+//   pub fn ap_hook_check_config(f: Option<hook_check_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_test_config(f: Option<hook_test_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_post_config(        f: Option<hook_post_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_create_request(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);

@@ -455,32 +455,32 @@ impl Request {
       from_char_ptr(escaped).ok_or(())
    }
 
-   pub fn escape_urlencoded<'a, T: Into<Vec<u8>>>(&self, s: T) -> Result<&'a str, ()> {
-      let c_str = match CString::new(s) {
-         Ok(s) => s,
-         Err(_) => return Err(())
-      };
+//   pub fn escape_urlencoded<'a, T: Into<Vec<u8>>>(&self, s: T) -> Result<&'a str, ()> {
+//      let c_str = match CString::new(s) {
+//         Ok(s) => s,
+//         Err(_) => return Err(())
+//      };
+//
+//      let escaped = unsafe {
+//         ffi::ap_escape_urlencoded(field!(self, pool), c_str.as_ptr())
+//      };
+//
+//      from_char_ptr(escaped).ok_or(())
+//   }
 
-      let escaped = unsafe {
-         ffi::ap_escape_urlencoded(field!(self, pool), c_str.as_ptr())
-      };
-
-      from_char_ptr(escaped).ok_or(())
-   }
-
-   pub fn unescape_urlencoded<'a, T: Into<Vec<u8>>>(&self, query: T) -> Result<&'a str, ()> {
-      let c_str = ffi::strdup(field!(self, pool), query);
-
-      let res = unsafe {
-         ffi::ap_unescape_urlencoded(c_str)
-      };
-
-      if res != 0 {
-         return Err(());
-      };
-
-      from_char_ptr(c_str).ok_or(())
-   }
+//   pub fn unescape_urlencoded<'a, T: Into<Vec<u8>>>(&self, query: T) -> Result<&'a str, ()> {
+//      let c_str = ffi::strdup(field!(self, pool), query);
+//
+//      let res = unsafe {
+//         ffi::ap_unescape_urlencoded(c_str)
+//      };
+//
+//      if res != 0 {
+//         return Err(());
+//      };
+//
+//      from_char_ptr(c_str).ok_or(())
+//   }
 
    pub fn server_name<'a>(&self) -> Option<&'a str> {
       from_char_ptr(
@@ -515,11 +515,11 @@ impl Request {
 
    }
 
-   pub fn context_document_root<'a>(&self) -> Option<&'a str> {
-      from_char_ptr(
-         unsafe { ffi::ap_context_document_root(self.ptr) }
-      )
-   }
+//   pub fn context_document_root<'a>(&self) -> Option<&'a str> {
+//      from_char_ptr(
+//         unsafe { ffi::ap_context_document_root(self.ptr) }
+//      )
+//   }
 
 //   pub fn context_prefix<'a>(&self) -> Option<&'a str> {
 //      from_char_ptr(
@@ -545,29 +545,29 @@ impl Request {
       unsafe { ffi::ap_some_auth_required(self.ptr) == 1 }
    }
 
-   pub fn cookie<'a, T: Into<Vec<u8>>>(&self, name: T) -> Option<&'a str> {
-      let c_str_name = ffi::strdup(field!(self, pool), name);
-      let mut val: *const c_char = ptr::null_mut();
+//   pub fn cookie<'a, T: Into<Vec<u8>>>(&self, name: T) -> Option<&'a str> {
+//      let c_str_name = ffi::strdup(field!(self, pool), name);
+//      let mut val: *const c_char = ptr::null_mut();
+//
+//      unsafe {
+//         ffi::ap_cookie_read(self.ptr, c_str_name, &mut val, 0);
+//      }
+//
+//      from_char_ptr(val)
+//   }
 
-      unsafe {
-         ffi::ap_cookie_read(self.ptr, c_str_name, &mut val, 0);
-      }
-
-      from_char_ptr(val)
-   }
-
-   pub fn set_cookie(&self, cookie: Cookie) {
-      let c_str_name = ffi::strdup(field!(self, pool), cookie.name);
-      let c_str_val = ffi::strdup(field!(self, pool), cookie.value);
-      let c_str_attrs = ffi::strdup(field!(self, pool), cookie.attrs(&self));
-
-      let null: *const ffi::apr_table_t = ptr::null();
-
-      unsafe {
-         ffi::ap_cookie_write(self.ptr, c_str_name, c_str_val, c_str_attrs, 0,
-                              field!(self, headers_out), null);
-      }
-   }
+//   pub fn set_cookie(&self, cookie: Cookie) {
+//      let c_str_name = ffi::strdup(field!(self, pool), cookie.name);
+//      let c_str_val = ffi::strdup(field!(self, pool), cookie.value);
+//      let c_str_attrs = ffi::strdup(field!(self, pool), cookie.attrs(&self));
+//
+//      let null: *const ffi::apr_table_t = ptr::null();
+//
+//      unsafe {
+//         ffi::ap_cookie_write(self.ptr, c_str_name, c_str_val, c_str_attrs, 0,
+//                              field!(self, headers_out), null);
+//      }
+//   }
 
    pub fn base64_encode<'a, T: Into<Vec<u8>>>(&self, plain: T) -> Result<&'a str, ()> {
       let c_str_plain: CString = match CString::new(plain) {

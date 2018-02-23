@@ -26,7 +26,7 @@ apache2_module!(
          create_server_config,
          merge_server_config
       }, [
-         (FLAG, b"EnabledVar\0", enabled_var, RSRC_CONF, b"Example flag\0"),
+         (FLAG, b"tCellEnabled\0", tcell_enabled, RSRC_CONF, b"Example flag\0"),
          (TAKE1, b"StringVar\0", string_var, RSRC_CONF, b"Example string directive\0"),
          (TAKE1, b"DirVar\0", dir_var, ACCESS_CONF, b"Directory string directive\0")
       ]
@@ -76,7 +76,7 @@ fn merge_dir_config<'a>(pool: &mut Pool, base_conf: &'a DirectoryConfig, new_con
 }
 
 
-fn enabled_var(parms: &mut CmdParms, _: Option<DirectoryConfig>, on: bool) -> Result<(), ()> {
+fn tcell_enabled(parms: &mut CmdParms, _: Option<DirectoryConfig>, on: bool) -> Result<(), ()> {
    let mut config = get_server_config_from_parms(parms);
 
    config.set_enabled(on);
@@ -128,5 +128,6 @@ fn conf_handler(r: &mut Request) -> Result<Status, ()> {
    let dir_var = unwrap_str(dir_config.dir_var());
    try!(r.write(format!("DirVar: {}\n", dir_var)));
 
+   println!("hi");
    Ok(Status::OK)
 }
