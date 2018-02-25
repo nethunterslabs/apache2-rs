@@ -6,3 +6,6 @@ version = "0.0.2"
 [dependencies]
 libc = "*"
 #interpolate_idents = "0.2.1"
+
+[features]
+apache22 = []

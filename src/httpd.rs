@@ -5,7 +5,6 @@ use libc::{c_void, c_int, c_char};
 
 use std::{fmt, ptr};
 use std::ffi::CString;
-use std::marker::PhantomData;
 
 use ffi;
 
@@ -13,6 +12,7 @@ use wrapper::{Wrapper, from_char_ptr, FromRaw};
 
 use apr::{Table, Pool, ArrayHeaderIter};
 use cookie::Cookie;
+
 
 
 macro_rules! field {
@@ -414,8 +414,10 @@ impl Request {
 
    option_getter!(request_config, ConfVector);
 
+   #[cfg(not(feature = "apache22"))]
    str_getter!(log_id);
 
+   #[cfg(not(feature = "apache22"))]
    str_getter!(useragent_ip);
 
    pub fn write<T: Into<Vec<u8>>>(&self, data: T) -> Result<(), ()> {
@@ -646,6 +648,7 @@ pub type Conn = Wrapper<ffi::conn_rec>;
 
 
 impl Conn {
+   #[cfg(not(feature = "apache22"))]
    str_getter!(client_ip);
 
    str_getter!(remote_host);
@@ -656,6 +659,7 @@ impl Conn {
 
    str_getter!(local_host);
 
+   #[cfg(not(feature = "apache22"))]
    str_getter!(log_id);
 }
 

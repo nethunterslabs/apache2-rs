@@ -8,6 +8,11 @@ pub mod apr;
 pub mod httpd;
 pub mod wrapper;
 pub mod cookie;
+#[cfg(feature = "apache22")]
+mod ffi22;
+#[cfg(not(feature = "apache22"))]
+mod ffi24;
+
 
 pub use libc::{c_void, c_char, c_int};
 

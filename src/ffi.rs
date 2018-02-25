@@ -1,4 +1,3 @@
-#![allow(raw_pointer_derive)]
 #![allow(non_camel_case_types)]
 
 use std::mem;
@@ -48,184 +47,106 @@ pub type apr_uid_t = c_uint;
 pub type apr_gid_t = c_uint;
 pub type apr_dev_t = c_ulong;
 pub type apr_fileperms_t = apr_int32_t;
+
+/// number of microseconds since 00:00:00 january 1, 1970 UTC
 pub type apr_time_t = apr_int64_t;
+/// intervals for I/O timeouts, in microseconds
 pub type apr_interval_time_t = apr_int64_t;
+/// short interval for I/O timeouts, in microseconds
+pub type apr_short_interval_time_t = apr_int32_t;
+/// @remark use apr_uint16_t just in case some system has a short that isn't 16 bits...
 pub type apr_port_t = apr_uint16_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_array_header_t {
-   pub pool: *mut apr_pool_t,
-   pub elt_size: c_int,
-   pub nelts: c_int,
-   pub nalloc: c_int,
-   pub elts: *mut c_char,
-}
+/// An opaque array type
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_array_header_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_array_header_t;
+
+/// The type for each entry in a string-content table
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_table_entry_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_table_entry_t;
+
+/// A list of buckets
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_bucket_brigade;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_bucket_brigade;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_table_entry_t {
-   pub key: *mut c_char,
-   pub val: *mut c_char,
-   pub key_checksum: apr_uint32_t,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_bucket_brigade {
-   pub p: *mut apr_pool_t,
-   pub list: apr_bucket_list,
-   pub bucket_alloc: *mut apr_bucket_alloc_t,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct apr_bucket_list {
    pub next: *mut apr_bucket,
    pub prev: *mut apr_bucket,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_bucket {
-   pub link: apr_bucket_list,
-   pub _type: *const apr_bucket_type_t,
-   pub length: apr_size_t,
-   pub start: apr_off_t,
-   pub data: *mut c_void,
-   pub free: Option<extern "C" fn(e: *mut c_void) -> ()>,
-   pub list: *mut apr_bucket_alloc_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_bucket;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_bucket;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_bucket_type_t {
-   pub name: *const c_char,
-   pub num_func: c_int,
-   pub is_metadata: apr_bucket_is_metadata_t,
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_bucket_type_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_bucket_type_t;
 
-   pub destroy: Option<extern "C" fn(
-      data: *mut c_void
-   ) -> ()>,
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_uri_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_uri_t;
 
-   pub read: Option<extern "C" fn(
-      b: *mut apr_bucket,
-      str: *mut *const c_char,
-      len: *mut apr_size_t,
-      block: apr_read_type_e
-   ) -> apr_status_t>,
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_sockaddr_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_sockaddr_t;
 
-   pub setaside: Option<extern "C" fn(
-      e: *mut apr_bucket,
-      pool: *mut apr_pool_t
-   ) -> apr_status_t>,
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_sockaddr_sa_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_sockaddr_sa_t;
 
-   pub split: Option<extern "C" fn(
-      e: *mut apr_bucket,
-      point: apr_size_t
-   ) -> apr_status_t>,
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_finfo_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_finfo_t;
 
-   pub copy: Option<extern "C" fn(
-      e: *mut apr_bucket,
-      c: *mut *mut apr_bucket
-   ) -> apr_status_t>,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::hostent;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::hostent;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_uri_t {
-   pub scheme: *mut c_char,
-   pub hostinfo: *mut c_char,
-   pub user: *mut c_char,
-   pub password: *mut c_char,
-   pub hostname: *mut c_char,
-   pub port_str: *mut c_char,
-   pub path: *mut c_char,
-   pub query: *mut c_char,
-   pub fragment: *mut c_char,
-   pub hostent: *mut hostent,
-   pub port: apr_port_t,
-   pub _bindgen_bitfield_1_: c_uint,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_bucket_alloc_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_bucket_alloc_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_sockaddr_t {
-   pub pool: *mut apr_pool_t,
-   pub hostname: *mut c_char,
-   pub servname: *mut c_char,
-   pub port: apr_port_t,
-   pub family: apr_int32_t,
-   pub salen: apr_socklen_t,
-   pub ipaddr_len: c_int,
-   pub addr_str_len: c_int,
-   pub ipaddr_ptr: *mut c_void,
-   pub next: *mut apr_sockaddr_t,
-   pub sa: apr_sockaddr_sa_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_pool_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_pool_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_sockaddr_sa_t {
-   pub _bindgen_data_: [u64; 16usize],
-}
-impl apr_sockaddr_sa_t {
-   pub unsafe fn sin(&mut self) -> *mut sockaddr_in {
-      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
-      mem::transmute(raw.offset(0))
-   }
-   pub unsafe fn sin6(&mut self) -> *mut sockaddr_in6 {
-      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
-      mem::transmute(raw.offset(0))
-   }
-   pub unsafe fn sas(&mut self) -> *mut sockaddr_storage {
-      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
-      mem::transmute(raw.offset(0))
-   }
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_table_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_table_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct apr_finfo_t {
-   pub pool: *mut apr_pool_t,
-   pub valid: apr_int32_t,
-   pub protection: apr_fileperms_t,
-   pub filetype: apr_filetype_e,
-   pub user: apr_uid_t,
-   pub group: apr_gid_t,
-   pub inode: apr_ino_t,
-   pub device: apr_dev_t,
-   pub nlink: apr_int32_t,
-   pub size: apr_off_t,
-   pub csize: apr_off_t,
-   pub atime: apr_time_t,
-   pub mtime: apr_time_t,
-   pub ctime: apr_time_t,
-   pub fname: *const c_char,
-   pub name: *const c_char,
-   pub filehand: *mut apr_file_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_thread_mutex_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_thread_mutex_t;
 
-#[derive(Copy, Clone)]
-pub enum hostent { }
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_thread_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_thread_t;
 
-#[derive(Copy, Clone)]
-pub enum apr_bucket_alloc_t { }
+#[cfg(feature = "apache22")]
+pub use ffi22::apr_file_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::apr_file_t;
 
-#[derive(Copy, Clone)]
-pub enum apr_pool_t { }
-
-#[derive(Copy, Clone)]
-pub enum apr_table_t { }
-
-#[derive(Copy, Clone)]
-pub enum apr_thread_mutex_t { }
-
-#[derive(Copy, Clone)]
-pub enum apr_thread_t { }
-
-#[derive(Copy, Clone)]
-pub enum apr_file_t { }
 
 extern "C" {
    pub fn apr_version_string() -> *const c_char;
@@ -260,16 +181,19 @@ pub fn strdup<T: Into<Vec<u8>>>(pool: *mut apr_pool_t, data: T) -> *mut c_char {
 }
 
 // APACHE HTTPD
+#[cfg(feature = "apache22")]
+pub const MODULE_MAGIC_COOKIE: c_ulong = ::ffi22::MODULE_MAGIC_COOKIE; /* "AP22" */
+#[cfg(feature = "apache22")]
+pub const MODULE_MAGIC_NUMBER_MAJOR: c_int = ::ffi22::MODULE_MAGIC_NUMBER_MAJOR;
+#[cfg(feature = "apache22")]
+pub const MODULE_MAGIC_NUMBER_MINOR: c_int = ::ffi22::MODULE_MAGIC_NUMBER_MINOR;
 
-//for 2.4, was:
-//pub const MODULE_MAGIC_COOKIE: c_ulong = 0x41503234u64; /* "AP24" */
-//pub const MODULE_MAGIC_NUMBER_MAJOR: c_int = 20120211;
-//pub const MODULE_MAGIC_NUMBER_MINOR: c_int = 36;
-
-// 2.2
-pub const MODULE_MAGIC_COOKIE: c_ulong = 0x41503232u64; /* "AP22" */
-pub const MODULE_MAGIC_NUMBER_MAJOR: c_int = 20051115;
-pub const MODULE_MAGIC_NUMBER_MINOR: c_int = 43;
+#[cfg(not(feature = "apache22"))]
+pub const MODULE_MAGIC_COOKIE: c_ulong  = ::ffi24::MODULE_MAGIC_COOKIE; /* "AP24" */
+#[cfg(not(feature = "apache22"))]
+pub const MODULE_MAGIC_NUMBER_MAJOR: c_int = ::ffi24::MODULE_MAGIC_NUMBER_MAJOR;
+#[cfg(not(feature = "apache22"))]
+pub const MODULE_MAGIC_NUMBER_MINOR: c_int = ::ffi24::MODULE_MAGIC_NUMBER_MINOR;
 
 
 pub const OK:        c_int = 0;
@@ -370,147 +294,20 @@ pub const NONFATAL_UNKNOWN:   c_int = 1024;
 pub const NONFATAL_ALL:       c_int = NONFATAL_OVERRIDE | NONFATAL_UNKNOWN;
 pub const OR_ALL:             c_int = OR_LIMIT | OR_OPTIONS | OR_FILEINFO | OR_AUTHCFG | OR_INDEXES;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct request_rec {
-   pub pool: *mut apr_pool_t,
-   pub connection: *mut conn_rec,
-   pub server: *mut server_rec,
-   pub next: *mut request_rec,
-   pub prev: *mut request_rec,
-   pub main: *mut request_rec,
-   pub the_request: *mut c_char,
-   pub assbackwards: c_int,
-   pub proxyreq: c_int,
-   pub header_only: c_int,
-   pub proto_num: c_int,
-   pub protocol: *mut c_char,
-   pub hostname: *const c_char,
-   pub request_time: apr_time_t,
-   pub status_line: *const c_char,
-   pub status: c_int,
-   pub method_number: c_int,
-   pub method: *const c_char,
-   pub allowed: apr_int64_t,
-   pub allowed_xmethods: *mut apr_array_header_t,
-   pub allowed_methods: *mut ap_method_list_t,
-   pub sent_bodyct: apr_off_t,
-   pub bytes_sent: apr_off_t,
-   pub mtime: apr_time_t,
-   pub range: *const c_char,
-   pub clength: apr_off_t,
-   pub chunked: c_int,
-   pub read_body: c_int,
-   pub read_chunked: c_int,
-   pub expecting_100: c_uint,
-   pub kept_body: *mut apr_bucket_brigade,
-   pub body_table: *mut apr_table_t,
-   pub remaining: apr_off_t,
-   pub read_length: apr_off_t,
-   pub headers_in: *mut apr_table_t,
-   pub headers_out: *mut apr_table_t,
-   pub err_headers_out: *mut apr_table_t,
-   pub subprocess_env: *mut apr_table_t,
-   pub notes: *mut apr_table_t,
-   pub content_type: *const c_char,
-   pub handler: *const c_char,
-   pub content_encoding: *const c_char,
-   pub content_languages: *mut apr_array_header_t,
-   pub vlist_validator: *mut c_char,
-   pub user: *mut c_char,
-   pub ap_auth_type: *mut c_char,
-   pub unparsed_uri: *mut c_char,
-   pub uri: *mut c_char,
-   pub filename: *mut c_char,
-   pub canonical_filename: *mut c_char,
-   pub path_info: *mut c_char,
-   pub args: *mut c_char,
-   pub used_path_info: c_int,
-   pub eos_sent: c_int,
-   pub per_dir_config: *mut ap_conf_vector_t,
-   pub request_config: *mut ap_conf_vector_t,
-   pub log: *const ap_logconf,
-   pub log_id: *const c_char,
-   pub htaccess: *const htaccess_result,
-   pub output_filters: *mut ap_filter_t,
-   pub input_filters: *mut ap_filter_t,
-   pub proto_output_filters: *mut ap_filter_t,
-   pub proto_input_filters: *mut ap_filter_t,
-   pub no_cache: c_int,
-   pub no_local_copy: c_int,
-   pub invoke_mtx: *mut apr_thread_mutex_t,
-   pub parsed_uri: apr_uri_t,
-   pub finfo: apr_finfo_t,
-   pub useragent_addr: *mut apr_sockaddr_t,
-   pub useragent_ip: *mut c_char,
-   pub trailers_in: *mut apr_table_t,
-   pub trailers_out: *mut apr_table_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::request_rec;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::request_rec;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct conn_rec {
-   pub pool: *mut apr_pool_t,
-   pub base_server: *mut server_rec,
-   pub vhost_lookup_data: *mut c_void,
-   pub local_addr: *mut apr_sockaddr_t,
-   pub client_addr: *mut apr_sockaddr_t,
-   pub client_ip: *mut c_char,
-   pub remote_host: *mut c_char,
-   pub remote_logname: *mut c_char,
-   pub local_ip: *mut c_char,
-   pub local_host: *mut c_char,
-   pub id: c_long,
-   pub conn_config: *mut ap_conf_vector_t,
-   pub notes: *mut apr_table_t,
-   pub input_filters: *mut ap_filter_t,
-   pub output_filters: *mut ap_filter_t,
-   pub sbh: *mut c_void,
-   pub bucket_alloc: *mut apr_bucket_alloc_t,
-   pub cs: *mut conn_state_t,
-   pub data_in_input_filters: c_int,
-   pub data_in_output_filters: c_int,
-   pub _bindgen_bitfield_1_: c_uint,
-   pub _bindgen_bitfield_2_: c_int,
-   pub aborted: c_uint,
-   pub keepalive: ap_conn_keepalive_e,
-   pub keepalives: c_int,
-   pub log: *const ap_logconf,
-   pub log_id: *const c_char,
-   pub current_thread: *mut apr_thread_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::conn_rec;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::conn_rec;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct server_rec {
-   pub process: *mut process_rec,
-   pub next: *mut server_rec,
-   pub error_fname: *mut c_char,
-   pub error_log: *mut apr_file_t,
-   pub log: ap_logconf,
-   pub module_config: *mut ap_conf_vector_t,
-   pub lookup_defaults: *mut ap_conf_vector_t,
-   pub defn_name: *const c_char,
-   pub defn_line_number: c_uint,
-   pub is_virtual: c_char,
-   pub port: apr_port_t,
-   pub server_scheme: *const c_char,
-   pub server_admin: *mut c_char,
-   pub server_hostname: *mut c_char,
-   pub addrs: *mut server_addr_rec,
-   pub timeout: apr_interval_time_t,
-   pub keep_alive_timeout: apr_interval_time_t,
-   pub keep_alive_max: c_int,
-   pub keep_alive: c_int,
-   pub names: *mut apr_array_header_t,
-   pub wild_names: *mut apr_array_header_t,
-   pub path: *const c_char,
-   pub pathlen: c_int,
-   pub limit_req_line: c_int,
-   pub limit_req_fieldsize: c_int,
-   pub limit_req_fields: c_int,
-   pub context: *mut c_void,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::server_rec;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::server_rec;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -692,24 +489,15 @@ pub struct htaccess_result {
    pub next: *const htaccess_result,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct process_rec {
-   pub pool: *mut apr_pool_t,
-   pub pconf: *mut apr_pool_t,
-   pub short_name: *const c_char,
-   pub argv: *const *const c_char,
-   pub argc: c_int,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::process_rec;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::process_rec;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct server_addr_rec {
-   pub next: *mut server_addr_rec,
-   pub virthost: *mut c_char,
-   pub host_addr: *mut apr_sockaddr_t,
-   pub host_port: apr_port_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::server_addr_rec;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::server_addr_rec;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -750,8 +538,11 @@ impl ap_filter_func {
    }
 }
 
-#[derive(Copy, Clone)]
-pub enum ap_conf_vector_t { }
+/// the configuration directives
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_conf_vector_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_conf_vector_t;
 
 #[derive(Copy, Clone)]
 pub enum ap_filter_provider_t { }
@@ -888,5 +679,21 @@ extern "C" {
 pub fn apr_table_elts_local(t: *const apr_table_t) -> *const apr_array_header_t {
    unsafe {
       ::std::mem::transmute(t)
+   }
+}
+
+#[cfg(test)]
+mod test {
+   use super::*;
+
+   #[test]
+   fn bindgen_test_layout_apr_array_header_t() {
+      assert_eq!(::std::mem::size_of::<apr_array_header_t>(), 32usize, concat!( "Size of: " , stringify ! ( apr_array_header_t ) ));
+      assert_eq!(::std::mem::align_of::<apr_array_header_t>(), 8usize, concat!( "Alignment of " , stringify ! ( apr_array_header_t ) ));
+      assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).pool as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( pool ) ));
+      assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).elt_size as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( elt_size ) ));
+      assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).nelts as *const _ as usize }, 12usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( nelts ) ));
+      assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).nalloc as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( nalloc ) ));
+      assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).elts as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( elts ) ));
    }
 }

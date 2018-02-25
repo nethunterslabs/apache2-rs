@@ -1,5 +1,3 @@
-#![allow(raw_pointer_derive)]
-
 use std::str;
 use std::ffi::CStr;
 use libc::c_char;
