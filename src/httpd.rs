@@ -419,6 +419,26 @@ impl Request {
 
    #[cfg(not(feature = "apache22"))]
    str_getter!(useragent_ip);
+   #[cfg(feature = "apache22")]
+   pub fn useragent_ip<'a>(&self) -> Option<&'a str> {
+      let conn = self.connection();
+      if (unsafe { *self.ptr }).connection.is_null() {
+         return None;
+      }
+      match conn {
+         Some(conn) => { from_char_ptr(unsafe{ (*conn.ptr).remote_ip })}
+         None => None
+      }
+   }
+
+   #[cfg(not(feature = "apache22"))]
+   pub unsafe fn useragent_addr(&self) -> *const ffi::apr_sockaddr_t {
+      (*self.ptr).useragent_addr
+   }
+   #[cfg(feature = "apache22")]
+   pub unsafe fn useragent_addr(&self) -> *const ffi::apr_sockaddr_t {
+      (*(*self.ptr).connection).remote_addr
+   }
 
    pub fn write<T: Into<Vec<u8>>>(&self, data: T) -> Result<(), ()> {
       let c_str_buf = match CString::new(data) {

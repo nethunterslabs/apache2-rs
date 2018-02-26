@@ -401,27 +401,11 @@ pub union cmd_func2 {
    _bindgen_union_align: u64,
 }
 
+#[cfg(feature = "apache22")]
+pub use ffi22::cmd_parms;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::cmd_parms;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct cmd_parms {
-   pub info: *mut c_void,
-   pub _override: c_int,
-   pub override_opts: c_int,
-   pub override_list: *mut apr_table_t,
-   pub limited: apr_int64_t,
-   pub limited_xmethods: *mut apr_array_header_t,
-   pub xlimited: *mut ap_method_list_t,
-   pub config_file: *mut ap_configfile_t,
-   pub directive: *mut ap_directive_t,
-   pub pool: *mut apr_pool_t,
-   pub temp_pool: *mut apr_pool_t,
-   pub server: *mut server_rec,
-   pub path: *mut c_char,
-   pub cmd: *const command_rec,
-   pub context: *mut ap_conf_vector_t,
-   pub err_directive: *const ap_directive_t,
-}
 
 //#[repr(C)]
 //#[derive(Copy, Clone)]
@@ -436,12 +420,10 @@ pub struct cmd_parms {
 //   pub provider_version: *const c_char,
 //}
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_method_list_t {
-   pub method_mask: apr_int64_t,
-   pub method_list: *mut apr_array_header_t,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_method_list_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_method_list_t;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -499,44 +481,53 @@ pub use ffi22::server_addr_rec;
 #[cfg(not(feature = "apache22"))]
 pub use ffi24::server_addr_rec;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_filter_t {
-   pub frec: *mut ap_filter_rec_t,
-   pub ctx: *mut c_void,
-   pub next: *mut ap_filter_t,
-   pub r: *mut request_rec,
-   pub c: *mut conn_rec,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_filter_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_filter_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_filter_rec_t {
-   pub name: *const c_char,
-   pub filter_func: ap_filter_func,
-   pub filter_init_func: Option<ap_init_filter_func>,
-   pub next: *mut ap_filter_rec_t,
-   pub providers: *mut ap_filter_provider_t,
-   pub ftype: ap_filter_type,
-   pub debug: c_int,
-   pub proto_flags: c_uint,
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_filter_rec_t;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_filter_rec_t;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct ap_filter_func {
-   pub _bindgen_data_: [u64; 1usize],
-}
-impl ap_filter_func {
-   pub unsafe fn out_func(&mut self) -> *mut Option<ap_out_filter_func> {
-      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
-      mem::transmute(raw.offset(0))
-   }
-   pub unsafe fn in_func(&mut self) -> *mut Option<ap_in_filter_func> {
-      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
-      mem::transmute(raw.offset(0))
-   }
-}
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_filter_func;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_filter_func;
+
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_out_filter_func;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_out_filter_func;
+
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_in_filter_func;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_in_filter_func;
+
+#[cfg(feature = "apache22")]
+pub use ffi22::ap_init_filter_func;
+#[cfg(not(feature = "apache22"))]
+pub use ffi24::ap_init_filter_func;
+
+
+
+//#[repr(C)]
+//#[derive(Copy, Clone)]
+//pub struct ap_filter_func {
+//   pub _bindgen_data_: [u64; 1usize],
+//}
+//impl ap_filter_func {
+//   pub unsafe fn out_func(&mut self) -> *mut Option<ap_out_filter_func> {
+//      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
+//      mem::transmute(raw.offset(0))
+//   }
+//   pub unsafe fn in_func(&mut self) -> *mut Option<ap_in_filter_func> {
+//      let raw: *mut u8 = mem::transmute(&self._bindgen_data_);
+//      mem::transmute(raw.offset(0))
+//   }
+//}
 
 /// the configuration directives
 #[cfg(feature = "apache22")]
@@ -555,20 +546,20 @@ pub type ap_filter_type = c_uint;
 
 pub type ap_input_mode_t = c_uint;
 
-pub type ap_init_filter_func = extern "C" fn(f: *mut ap_filter_t) -> apr_status_t;
-
-pub type ap_out_filter_func = extern "C" fn(
-   f: *mut ap_filter_t,
-   b: *mut apr_bucket_brigade
-) -> apr_status_t;
-
-pub type ap_in_filter_func = extern "C" fn(
-   f: *mut ap_filter_t,
-   b: *mut apr_bucket_brigade,
-   mode: ap_input_mode_t,
-   block: apr_read_type_e,
-   readbytes: apr_off_t
-) -> apr_status_t;
+//pub type ap_init_filter_func = extern "C" fn(f: *mut ap_filter_t) -> apr_status_t;
+//
+//pub type ap_out_filter_func = extern "C" fn(
+//   f: *mut ap_filter_t,
+//   b: *mut apr_bucket_brigade
+//) -> apr_status_t;
+//
+//pub type ap_in_filter_func = extern "C" fn(
+//   f: *mut ap_filter_t,
+//   b: *mut apr_bucket_brigade,
+//   mode: ap_input_mode_t,
+//   block: apr_read_type_e,
+//   readbytes: apr_off_t
+//) -> apr_status_t;
 
 pub type rewrite_args_fn = extern "C" fn(
    process: *mut process_rec
@@ -666,7 +657,9 @@ extern "C" {
    pub fn ap_hook_log_transaction(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_child_init(         f: Option<hook_child_init_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 
-   pub fn ap_register_output_filter(name: *const c_char, filter_fn: Option<ap_out_filter_func>, init_fn: Option<ap_init_filter_func>, filter_type: ap_filter_type) -> *const ap_filter_rec_t;
+
+   //todo:  this might have gotten messed up from the bindgen conversion of function args.  Look at the old param types
+   pub fn ap_register_output_filter(name: *const c_char, filter_fn: ap_out_filter_func, init_fn: ap_init_filter_func, filter_type: ap_filter_type) -> *const ap_filter_rec_t;
    pub fn ap_hook_insert_filter      (f: Option<hook_insert_output_filter_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_insert_error_filter(f: Option<hook_insert_output_filter_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 
@@ -695,5 +688,10 @@ mod test {
       assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).nelts as *const _ as usize }, 12usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( nelts ) ));
       assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).nalloc as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( nalloc ) ));
       assert_eq!(unsafe { &(*(::std::ptr::null::<apr_array_header_t>())).elts as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( apr_array_header_t ) , "::" , stringify ! ( elts ) ));
+   }
+
+   #[test]
+   fn test_magic() {
+      println!("MAGIC {}", MODULE_MAGIC_COOKIE);
    }
 }

@@ -3461,7 +3461,7 @@ fn bindgen_test_layout_sockaddr_in() {
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct sockaddr_in6 { pub sin6_family: sa_family_t, pub sin6_port: in_port_t, pub sin6_flowinfo: u32, pub sin6_addr: in6_addr, pub sin6_scope_id: u32 }
+pub struct sockaddr_in6 { pub sin6_family: sa_family_t, pub sin6_port: in_port_t, pub sin6_flowinfo: u32, pub sin6_addr: ::libc::in6_addr, pub sin6_scope_id: u32 }
 
 #[test]
 fn bindgen_test_layout_sockaddr_in6() {
@@ -5130,6 +5130,1386 @@ fn bindgen_test_layout_core_net_rec() {
     assert_eq!(unsafe { &(*(::std::ptr::null::<core_net_rec>())).in_ctx as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( core_net_rec ) , "::" , stringify ! ( in_ctx ) ));
 }
 
+extern "C" {
+    /// Examine a field value (such as a media-/content-type) string and return
+/// it sans any parameters; e.g., strip off any ';charset=foo' and the like.
+/// @param p Pool to allocate memory from
+/// @param intype The field to examine
+/// @return A copy of the field minus any parameters
+    pub fn ap_field_noparam(p: *mut apr_pool_t, intype: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Convert a time from an integer into a string in a specified format
+/// @param p The pool to allocate memory from
+/// @param t The time to convert
+/// @param fmt The format to use for the conversion
+/// @param gmt Convert the time for GMT?
+/// @return The string that represents the specified time
+    pub fn ap_ht_time(p: *mut apr_pool_t, t: apr_time_t, fmt: *const ::libc::c_char, gmt: ::libc::c_int) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the characters until the first occurance of a specified character
+/// @param p The pool to allocate memory from
+/// @param line The string to get the characters from
+/// @param stop The character to stop at
+/// @return A copy of the characters up to the first stop character
+    pub fn ap_getword(p: *mut apr_pool_t, line: *mut *const ::libc::c_char, stop: ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the characters until the first occurance of a specified character
+/// @param p The pool to allocate memory from
+/// @param line The string to get the characters from
+/// @param stop The character to stop at
+/// @return A copy of the characters up to the first stop character
+/// @note This is the same as ap_getword(), except it doesn't use const char **.
+    pub fn ap_getword_nc(p: *mut apr_pool_t, line: *mut *mut ::libc::c_char, stop: ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the first word from a given string.  A word is defined as all characters
+/// up to the first whitespace.
+/// @param p The pool to allocate memory from
+/// @param line The string to traverse
+/// @return The first word in the line
+    pub fn ap_getword_white(p: *mut apr_pool_t, line: *mut *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the first word from a given string.  A word is defined as all characters
+/// up to the first whitespace.
+/// @param p The pool to allocate memory from
+/// @param line The string to traverse
+/// @return The first word in the line
+/// @note The same as ap_getword_white(), except it doesn't use const char**
+    pub fn ap_getword_white_nc(p: *mut apr_pool_t, line: *mut *mut ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get all characters from the first occurance of @a stop to the first "\0"
+/// @param p The pool to allocate memory from
+/// @param line The line to traverse
+/// @param stop The character to start at
+/// @return A copy of all caracters after the first occurance of the specified
+/// character
+    pub fn ap_getword_nulls(p: *mut apr_pool_t, line: *mut *const ::libc::c_char, stop: ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get all characters from the first occurance of @a stop to the first "\0"
+/// @param p The pool to allocate memory from
+/// @param line The line to traverse
+/// @param stop The character to start at
+/// @return A copy of all caracters after the first occurance of the specified
+/// character
+/// @note The same as ap_getword_nulls(), except it doesn't use const char **.
+    pub fn ap_getword_nulls_nc(p: *mut apr_pool_t, line: *mut *mut ::libc::c_char, stop: ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the second word in the string paying attention to quoting
+/// @param p The pool to allocate from
+/// @param line The line to traverse
+/// @return A copy of the string
+    pub fn ap_getword_conf(p: *mut apr_pool_t, line: *mut *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Get the second word in the string paying attention to quoting
+/// @param p The pool to allocate from
+/// @param line The line to traverse
+/// @return A copy of the string
+/// @note The same as ap_getword_conf(), except it doesn't use const char **.
+    pub fn ap_getword_conf_nc(p: *mut apr_pool_t, line: *mut *mut ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Check a string for any ${ENV} environment variable construct and replace
+/// each them by the value of that environment variable, if it exists. If the
+/// environment value does not exist, leave the ${ENV} construct alone; it
+/// means something else.
+/// @param p The pool to allocate from
+/// @param word The string to check
+/// @return The string with the replaced environment variables
+    pub fn ap_resolve_env(p: *mut apr_pool_t, word: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Size an HTTP header field list item, as separated by a comma.
+/// @param field The field to size
+/// @param len The length of the field
+/// @return The return value is a pointer to the beginning of the non-empty
+/// list item within the original string (or NULL if there is none) and the
+/// address of field is shifted to the next non-comma, non-whitespace
+/// character.  len is the length of the item excluding any beginning whitespace.
+    pub fn ap_size_list_item(field: *mut *const ::libc::c_char, len: *mut ::libc::c_int) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Retrieve an HTTP header field list item, as separated by a comma,
+/// while stripping insignificant whitespace and lowercasing anything not in
+/// a quoted string or comment.
+/// @param p The pool to allocate from
+/// @param field The field to retrieve
+/// @return The return value is a new string containing the converted list
+/// item (or NULL if none) and the address pointed to by field is
+/// shifted to the next non-comma, non-whitespace.
+    pub fn ap_get_list_item(p: *mut apr_pool_t, field: *mut *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Find an item in canonical form (lowercase, no extra spaces) within
+/// an HTTP field value list.
+/// @param p The pool to allocate from
+/// @param line The field value list to search
+/// @param tok The token to search for
+/// @return 1 if found, 0 if not found.
+    pub fn ap_find_list_item(p: *mut apr_pool_t, line: *const ::libc::c_char, tok: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" { pub fn ap_scan_http_field_content(ptr: *const ::libc::c_char) -> *const ::libc::c_char; }
+
+extern "C" { pub fn ap_scan_http_token(ptr: *const ::libc::c_char) -> *const ::libc::c_char; }
+
+extern "C" { pub fn ap_scan_vchar_obstext(ptr: *const ::libc::c_char) -> *const ::libc::c_char; }
+
+extern "C" {
+    /// Retrieve a token, spacing over it and adjusting the pointer to
+/// the first non-white byte afterwards.  Note that these tokens
+/// are delimited by semis and commas and can also be delimited
+/// by whitespace at the caller's option.
+/// @param p The pool to allocate from
+/// @param accept_line The line to retrieve the token from (adjusted afterwards)
+/// @param accept_white Is it delimited by whitespace
+/// @return the token
+    pub fn ap_get_token(p: *mut apr_pool_t, accept_line: *mut *const ::libc::c_char, accept_white: ::libc::c_int) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Find http tokens, see the definition of token from RFC2068
+/// @param p The pool to allocate from
+/// @param line The line to find the token
+/// @param tok The token to find
+/// @return 1 if the token is found, 0 otherwise
+    pub fn ap_find_token(p: *mut apr_pool_t, line: *const ::libc::c_char, tok: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// find http tokens from the end of the line
+/// @param p The pool to allocate from
+/// @param line The line to find the token
+/// @param tok The token to find
+/// @return 1 if the token is found, 0 otherwise
+    pub fn ap_find_last_token(p: *mut apr_pool_t, line: *const ::libc::c_char, tok: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Check for an Absolute URI syntax
+/// @param u The string to check
+/// @return 1 if URI, 0 otherwise
+    pub fn ap_is_url(u: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Unescape a URL
+/// @param url The url to unescape
+/// @return 0 on success, non-zero otherwise
+    pub fn ap_unescape_url(url: *mut ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Unescape a URL, including encoded slashes.
+/// @param url The url to unescape
+/// @return 0 on success, non-zero otherwise
+    pub fn ap_unescape_url_keep2f(url: *mut ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Unescape a URL, including encoded slashes.
+/// @param url The url to unescape
+/// @param decode_slashes Whether or not slashes should be decoded or not
+/// @return 0 on success, non-zero otherwise
+    pub fn ap_unescape_url_keep2f_ex(url: *mut ::libc::c_char, decode_slashes: ::libc::c_int) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Convert all double slashes to single slashes
+/// @param name The string to convert
+    pub fn ap_no2slash(name: *mut ::libc::c_char);
+}
+
+extern "C" {
+    /// Remove all ./ and xx/../ substrings from a file name. Also remove
+/// any leading ../ or /../ substrings.
+/// @param name the file name to parse
+    pub fn ap_getparents(name: *mut ::libc::c_char);
+}
+
+extern "C" {
+    /// Escape a path segment, as defined in RFC 1808
+/// @param p The pool to allocate from
+/// @param s The path to convert
+/// @return The converted URL
+    pub fn ap_escape_path_segment(p: *mut apr_pool_t, s: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// convert an OS path to a URL in an OS dependant way.
+/// @param p The pool to allocate from
+/// @param path The path to convert
+/// @param partial if set, assume that the path will be appended to something
+/// with a '/' in it (and thus does not prefix "./")
+/// @return The converted URL
+    pub fn ap_os_escape_path(p: *mut apr_pool_t, path: *const ::libc::c_char, partial: ::libc::c_int) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Escape an html string
+/// @param p The pool to allocate from
+/// @param s The html to escape
+/// @return The escaped string
+    pub fn ap_escape_html(p: *mut apr_pool_t, s: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Escape an html string
+/// @param p The pool to allocate from
+/// @param s The html to escape
+/// @param toasc Whether to escape all non-ASCII chars to &#nnn;
+/// @return The escaped string
+    pub fn ap_escape_html2(p: *mut apr_pool_t, s: *const ::libc::c_char, toasc: ::libc::c_int) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Escape a string for logging
+/// @param p The pool to allocate from
+/// @param str The string to escape
+/// @return The escaped string
+    pub fn ap_escape_logitem(p: *mut apr_pool_t, str: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Escape a string for logging into the error log (without a pool)
+/// @param dest The buffer to write to
+/// @param source The string to escape
+/// @param buflen The buffer size for the escaped string (including "\0")
+/// @return The len of the escaped string (always < maxlen)
+    pub fn ap_escape_errorlog_item(dest: *mut ::libc::c_char, source: *const ::libc::c_char, buflen: apr_size_t) -> apr_size_t;
+}
+
+extern "C" {
+    /// Construct a full hostname
+/// @param p The pool to allocate from
+/// @param hostname The hostname of the server
+/// @param port The port the server is running on
+/// @param r The current request
+/// @return The server's hostname
+    pub fn ap_construct_server(p: *mut apr_pool_t, hostname: *const ::libc::c_char, port: apr_port_t, r: *const request_rec) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Escape a shell command
+/// @param p The pool to allocate from
+/// @param s The command to escape
+/// @return The escaped shell command
+    pub fn ap_escape_shell_cmd(p: *mut apr_pool_t, s: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Count the number of directories in a path
+/// @param path The path to count
+/// @return The number of directories
+    pub fn ap_count_dirs(path: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Copy at most @a n leading directories of @a s into @a d. @a d
+/// should be at least as large as @a s plus 1 extra byte
+///
+/// @param d The location to copy to
+/// @param s The location to copy from
+/// @param n The number of directories to copy
+/// @return value is the ever useful pointer to the trailing "\0" of d
+/// @note on platforms with drive letters, n = 0 returns the "/" root,
+/// whereas n = 1 returns the "d:/" root.  On all other platforms, n = 0
+/// returns the empty string.
+    pub fn ap_make_dirstr_prefix(d: *mut ::libc::c_char, s: *const ::libc::c_char, n: ::libc::c_int) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Return the parent directory name (including trailing /) of the file
+/// @a s
+/// @param p The pool to allocate from
+/// @param s The file to get the parent of
+/// @return A copy of the file's parent directory
+    pub fn ap_make_dirstr_parent(p: *mut apr_pool_t, s: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Given a directory and filename, create a single path from them.  This
+/// function is smart enough to ensure that there is a single '/' between the
+/// directory and file names
+/// @param a The pool to allocate from
+/// @param dir The directory name
+/// @param f The filename
+/// @return A copy of the full path
+/// @note Never consider using this function if you are dealing with filesystem
+/// names that need to remain canonical, unless you are merging an apr_dir_read
+/// path and returned filename.  Otherwise, the result is not canonical.
+    pub fn ap_make_full_path(a: *mut apr_pool_t, dir: *const ::libc::c_char, f: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Test if the given path has an an absolute path.
+/// @param p The pool to allocate from
+/// @param dir The directory name
+/// @note The converse is not necessarily true, some OS's (Win32/OS2/Netware) have
+/// multiple forms of absolute paths.  This only reports if the path is absolute
+/// in a canonical sense.
+    pub fn ap_os_is_path_absolute(p: *mut apr_pool_t, dir: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Does the provided string contain wildcard characters?  This is useful
+/// for determining if the string should be passed to strcmp_match or to strcmp.
+/// The only wildcard characters recognized are '?' and '*'
+/// @param str The string to check
+/// @return 1 if the string has wildcards, 0 otherwise
+    pub fn ap_is_matchexp(str: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Determine if a string matches a pattern containing the wildcards '?' or '*'
+/// @param str The string to check
+/// @param expected The pattern to match against
+/// @return 1 if the two strings match, 0 otherwise
+    pub fn ap_strcmp_match(str: *const ::libc::c_char, expected: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Determine if a string matches a pattern containing the wildcards '?' or '*',
+/// ignoring case
+/// @param str The string to check
+/// @param expected The pattern to match against
+/// @return 1 if the two strings match, 0 otherwise
+    pub fn ap_strcasecmp_match(str: *const ::libc::c_char, expected: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Find the first occurrence of the substring s2 in s1, regardless of case
+/// @param s1 The string to search
+/// @param s2 The substring to search for
+/// @return A pointer to the beginning of the substring
+/// @remark See apr_strmatch() for a faster alternative
+    pub fn ap_strcasestr(s1: *const ::libc::c_char, s2: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Return a pointer to the location inside of bigstring immediately after prefix
+/// @param bigstring The input string
+/// @param prefix The prefix to strip away
+/// @return A pointer relative to bigstring after prefix
+    pub fn ap_stripprefix(bigstring: *const ::libc::c_char, prefix: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Decode a base64 encoded string into memory allocated from a pool
+/// @param p The pool to allocate from
+/// @param bufcoded The encoded string
+/// @return The decoded string
+    pub fn ap_pbase64decode(p: *mut apr_pool_t, bufcoded: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Encode a string into memory allocated from a pool in base 64 format
+/// @param p The pool to allocate from
+/// @param string The plaintext string
+/// @return The encoded string
+    pub fn ap_pbase64encode(p: *mut apr_pool_t, string: *mut ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Compile a regular expression to be used later
+/// @param p The pool to allocate from
+/// @param pattern the regular expression to compile
+/// @param cflags The bitwise or of one or more of the following:
+/// @li REG_EXTENDED - Use POSIX extended Regular Expressions
+/// @li REG_ICASE    - Ignore case
+/// @li REG_NOSUB    - Support for substring addressing of matches
+/// not required
+/// @li REG_NEWLINE  - Match-any-character operators don't match new-line
+/// @return The compiled regular expression
+    pub fn ap_pregcomp(p: *mut apr_pool_t, pattern: *const ::libc::c_char, cflags: ::libc::c_int) -> *mut ap_regex_t;
+}
+
+extern "C" {
+    /// Free the memory associated with a compiled regular expression
+/// @param p The pool the regex was allocated from
+/// @param reg The regular expression to free
+    pub fn ap_pregfree(p: *mut apr_pool_t, reg: *mut ap_regex_t);
+}
+
+extern "C" {
+    /// After performing a successful regex match, you may use this function to
+/// perform a series of string substitutions based on subexpressions that were
+/// matched during the call to ap_regexec
+/// @param p The pool to allocate from
+/// @param input An arbitrary string containing $1 through $9.  These are
+/// replaced with the corresponding matched sub-expressions
+/// @param source The string that was originally matched to the regex
+/// @param nmatch the nmatch returned from ap_pregex
+/// @param pmatch the pmatch array returned from ap_pregex
+    pub fn ap_pregsub(p: *mut apr_pool_t, input: *const ::libc::c_char, source: *const ::libc::c_char, nmatch: usize, pmatch: *mut ap_regmatch_t) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// After performing a successful regex match, you may use this function to
+/// perform a series of string substitutions based on subexpressions that were
+/// matched during the call to ap_regexec
+/// @param p The pool to allocate from
+/// @param result where to store the result, will be set to NULL on error
+/// @param input An arbitrary string containing $1 through $9.  These are
+/// replaced with the corresponding matched sub-expressions
+/// @param source The string that was originally matched to the regex
+/// @param nmatch the nmatch returned from ap_pregex
+/// @param pmatch the pmatch array returned from ap_pregex
+/// @param maxlen the maximum string length to return, 0 for unlimited
+/// @return APR_SUCCESS if successful, APR_ENOMEM or other error code otherwise.
+    pub fn ap_pregsub_ex(p: *mut apr_pool_t, result: *mut *mut ::libc::c_char, input: *const ::libc::c_char, source: *const ::libc::c_char, nmatch: apr_size_t, pmatch: *mut ap_regmatch_t, maxlen: apr_size_t) -> apr_status_t;
+}
+
+extern "C" {
+    /// We want to downcase the type/subtype for comparison purposes
+/// but nothing else because ;parameter=foo values are case sensitive.
+/// @param s The content-type to convert to lowercase
+    pub fn ap_content_type_tolower(s: *mut ::libc::c_char);
+}
+
+extern "C" {
+    /// convert a string to all lowercase
+/// @param s The string to convert to lowercase
+    pub fn ap_str_tolower(s: *mut ::libc::c_char);
+}
+
+extern "C" {
+    /// Search a string from left to right for the first occurrence of a
+/// specific character
+/// @param str The string to search
+/// @param c The character to search for
+/// @return The index of the first occurrence of c in str
+    pub fn ap_ind(str: *const ::libc::c_char, c: ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Search a string from right to left for the first occurrence of a
+/// specific character
+/// @param str The string to search
+/// @param c The character to search for
+/// @return The index of the first occurrence of c in str
+    pub fn ap_rind(str: *const ::libc::c_char, c: ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Given a string, replace any bare " with \" .
+/// @param p The pool to allocate memory from
+/// @param instring The string to search for "
+/// @return A copy of the string with escaped quotes
+    pub fn ap_escape_quotes(p: *mut apr_pool_t, instring: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Given a string, append the PID deliminated by delim.
+/// Usually used to create a pid-appended filepath name
+/// (eg: /a/b/foo -> /a/b/foo.6726). A function, and not
+/// a macro, to avoid unistd.h dependency
+/// @param p The pool to allocate memory from
+/// @param string The string to append the PID to
+/// @param delim The string to use to deliminate the string from the PID
+/// @return A copy of the string with the PID appended
+    pub fn ap_append_pid(p: *mut apr_pool_t, string: *const ::libc::c_char, delim: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Parse a given timeout parameter string into an apr_interval_time_t value.
+/// The unit of the time interval is given as postfix string to the numeric
+/// string. Currently the following units are understood:
+///
+/// ms    : milliseconds
+/// s     : seconds
+/// mi[n] : minutes
+/// h     : hours
+///
+/// If no unit is contained in the given timeout parameter the default_time_unit
+/// will be used instead.
+/// @param timeout_parameter The string containing the timeout parameter.
+/// @param timeout The timeout value to be returned.
+/// @param default_time_unit The default time unit to use if none is specified
+/// in timeout_parameter.
+/// @return Status value indicating whether the parsing was successful or not.
+    pub fn ap_timeout_parameter_parse(timeout_parameter: *const ::libc::c_char, timeout: *mut apr_interval_time_t, default_time_unit: *const ::libc::c_char) -> apr_status_t;
+}
+
+extern "C" {
+    /// Given the name of an object in the file system determine if it is a directory
+/// @param p The pool to allocate from
+/// @param name The name of the object to check
+/// @return 1 if it is a directory, 0 otherwise
+    pub fn ap_is_rdirectory(p: *mut apr_pool_t, name: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Given the name of an object in the file system determine if it is a directory - this version is symlink aware
+/// @param p The pool to allocate from
+/// @param name The name of the object to check
+/// @return 1 if it is a directory, 0 otherwise
+    pub fn ap_is_directory(p: *mut apr_pool_t, name: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Determine the local host name for the current machine
+/// @param p The pool to allocate from
+/// @return A copy of the local host name
+    pub fn ap_get_local_host(p: *mut apr_pool_t) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Log an assertion to the error log
+/// @param szExp The assertion that failed
+/// @param szFile The file the assertion is in
+/// @param nLine The line the assertion is defined on
+    pub fn ap_log_assert(szExp: *const ::libc::c_char, szFile: *const ::libc::c_char, nLine: ::libc::c_int);
+}
+
+extern "C" {
+    /// @} */
+/// /**
+/// Get HTML describing the address and (optionally) admin of the server.
+/// @param prefix Text which is prepended to the return value
+/// @param r The request_rec
+/// @return HTML describing the server, allocated in @a r's pool.
+    pub fn ap_psignature(prefix: *const ::libc::c_char, r: *mut request_rec) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Short function to execute a command and return the first line of
+/// output minus \r \n. Useful for "obscuring" passwords via exec calls
+/// @param p the pool to allocate from
+/// @param cmd the command to execute
+/// @param argv the arguments to pass to the cmd
+/// @return ptr to characters or NULL on any error
+    pub fn ap_get_exec_line(p: *mut apr_pool_t, cmd: *const ::libc::c_char, argv: *const *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" { pub fn ap_strchr(s: *mut ::libc::c_char, c: ::libc::c_int) -> *mut ::libc::c_char; }
+
+extern "C" { pub fn ap_strchr_c(s: *const ::libc::c_char, c: ::libc::c_int) -> *const ::libc::c_char; }
+
+extern "C" { pub fn ap_strrchr(s: *mut ::libc::c_char, c: ::libc::c_int) -> *mut ::libc::c_char; }
+
+extern "C" { pub fn ap_strrchr_c(s: *const ::libc::c_char, c: ::libc::c_int) -> *const ::libc::c_char; }
+
+extern "C" { pub fn ap_strstr(s: *mut ::libc::c_char, c: *const ::libc::c_char) -> *mut ::libc::c_char; }
+
+extern "C" { pub fn ap_strstr_c(s: *const ::libc::c_char, c: *const ::libc::c_char) -> *const ::libc::c_char; }
+
+/// @brief Structure used to build the config tree.
+///
+/// The config tree only stores
+/// the directives that will be active in the running server.  Directives
+/// that contain other directions, such as <Directory ...> cause a sub-level
+/// to be created, where the included directives are stored.  The closing
+/// directive (</Directory>) is not stored in the tree.
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_directive_t {
+    /// The current directive
+    pub directive: *const ::libc::c_char,
+    /// The arguments for the current directive, stored as a space
+    /// separated list
+    pub args: *const ::libc::c_char,
+    /// The next directive node in the tree
+    /// @defvar ap_directive_t *next
+    pub next: *mut ap_directive_t,
+    /// The first child node of this directive
+    /// @defvar ap_directive_t *first_child
+    pub first_child: *mut ap_directive_t,
+    /// The parent node of this directive
+    /// @defvar ap_directive_t *parent
+    pub parent: *mut ap_directive_t,
+    /// directive's module can store add'l data here
+    pub data: *mut ::libc::c_void,
+    /// The name of the file this directive was found in
+    pub filename: *const ::libc::c_char,
+    /// The line number the directive was on
+    pub line_num: ::libc::c_int,
+}
+
+#[test]
+fn bindgen_test_layout_ap_directive_t() {
+    assert_eq!(::std::mem::size_of::<ap_directive_t>(), 64usize, concat!( "Size of: " , stringify ! ( ap_directive_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_directive_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_directive_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).directive as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( directive ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).args as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( args ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).next as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).first_child as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( first_child ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).parent as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( parent ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).data as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( data ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).filename as *const _ as usize }, 48usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( filename ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_directive_t>())).line_num as *const _ as usize }, 56usize, concat!( "Offset of field: " , stringify ! ( ap_directive_t ) , "::" , stringify ! ( line_num ) ));
+}
+
+extern "C" {
+    #[link_name = "\u{1}ap_conftree"]
+    pub static mut ap_conftree: *mut ap_directive_t;
+}
+
+extern "C" {
+    /// Add a node to the configuration tree.
+/// @param parent The current parent node.  If the added node is a first_child,
+/// then this is changed to the current node
+/// @param current The current node
+/// @param toadd The node to add to the tree
+/// @param child Is the node to add a child node
+/// @return the added node
+    pub fn ap_add_node(parent: *mut *mut ap_directive_t, current: *mut ap_directive_t, toadd: *mut ap_directive_t, child: ::libc::c_int) -> *mut ap_directive_t;
+}
+
+/// < cmd_func parses command line itself
+pub const cmd_how_RAW_ARGS: cmd_how = 0;
+/// < one argument only
+pub const cmd_how_TAKE1: cmd_how = 1;
+/// < two arguments only
+pub const cmd_how_TAKE2: cmd_how = 2;
+/// < one argument, occuring multiple times
+/// (e.g., IndexIgnore)
+pub const cmd_how_ITERATE: cmd_how = 3;
+/// < two arguments, 2nd occurs multiple times
+/// (e.g., AddIcon)
+pub const cmd_how_ITERATE2: cmd_how = 4;
+/// < One of 'On' or 'Off'
+pub const cmd_how_FLAG: cmd_how = 5;
+/// < No args at all, e.g. </Directory>
+pub const cmd_how_NO_ARGS: cmd_how = 6;
+/// < one or two arguments
+pub const cmd_how_TAKE12: cmd_how = 7;
+/// < three arguments only
+pub const cmd_how_TAKE3: cmd_how = 8;
+/// < two or three arguments
+pub const cmd_how_TAKE23: cmd_how = 9;
+/// < one, two or three arguments
+pub const cmd_how_TAKE123: cmd_how = 10;
+/// < one or three arguments
+pub const cmd_how_TAKE13: cmd_how = 11;
+/// < an argc and argv are passed
+pub const cmd_how_TAKE_ARGV: cmd_how = 12;
+
+/// How the directives arguments should be parsed.
+/// @remark Note that for all of these except RAW_ARGS, the config routine is
+/// passed a freshly allocated string which can be modified or stored
+/// or whatever...
+pub type cmd_how = u32;
+/// This structure is passed to a command which is being invoked,
+/// to carry a large variety of miscellaneous data which is all of
+/// use to *somebody*...
+pub type cmd_parms = cmd_parms_struct;
+
+/// All the types of functions that can be used in directives
+/// @internal
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union cmd_func {
+    /// function to call for a no-args
+    pub no_args: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void) -> *const ::libc::c_char>,
+    /// function to call for a raw-args
+    pub raw_args: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, args: *const ::libc::c_char) -> *const ::libc::c_char>,
+    /// function to call for a argv/argc
+    pub take_argv: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, argc: ::libc::c_int, argv: *const *const ::libc::c_char) -> *const ::libc::c_char>,
+    /// function to call for a take1
+    pub take1: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, w: *const ::libc::c_char) -> *const ::libc::c_char>,
+    /// function to call for a take2
+    pub take2: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, w: *const ::libc::c_char, w2: *const ::libc::c_char) -> *const ::libc::c_char>,
+    /// function to call for a take3
+    pub take3: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, w: *const ::libc::c_char, w2: *const ::libc::c_char, w3: *const ::libc::c_char) -> *const ::libc::c_char>,
+    /// function to call for a flag
+    pub flag: ::std::option::Option<unsafe extern "C" fn(parms: *mut cmd_parms, mconfig: *mut ::libc::c_void, on: ::libc::c_int) -> *const ::libc::c_char>,
+    _bindgen_union_align: u64,
+}
+
+#[test]
+fn bindgen_test_layout_cmd_func() {
+    assert_eq!(::std::mem::size_of::<cmd_func>(), 8usize, concat!( "Size of: " , stringify ! ( cmd_func ) ));
+    assert_eq!(::std::mem::align_of::<cmd_func>(), 8usize, concat!( "Alignment of " , stringify ! ( cmd_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).no_args as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( no_args ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).raw_args as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( raw_args ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).take_argv as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( take_argv ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).take1 as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( take1 ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).take2 as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( take2 ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).take3 as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( take3 ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_func>())).flag as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_func ) , "::" , stringify ! ( flag ) ));
+}
+
+/// The command record structure.  Each modules can define a table of these
+/// to define the directives it will implement.
+pub type command_rec = command_struct;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct command_struct {
+    /// Name of this command
+    pub name: *const ::libc::c_char,
+    /// The function to be called when this directive is parsed
+    pub func: cmd_func,
+    /// Extra data, for functions which implement multiple commands...
+    pub cmd_data: *mut ::libc::c_void,
+    /// What overrides need to be allowed to enable this command.
+    pub req_override: ::libc::c_int,
+    /// What the command expects as arguments
+    /// @defvar cmd_how args_how
+    pub args_how: cmd_how,
+    /// 'usage' message, in case of syntax errors
+    pub errmsg: *const ::libc::c_char,
+}
+
+#[test]
+fn bindgen_test_layout_command_struct() {
+    assert_eq!(::std::mem::size_of::<command_struct>(), 40usize, concat!( "Size of: " , stringify ! ( command_struct ) ));
+    assert_eq!(::std::mem::align_of::<command_struct>(), 8usize, concat!( "Alignment of " , stringify ! ( command_struct ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).name as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( name ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).func as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).cmd_data as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( cmd_data ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).req_override as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( req_override ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).args_how as *const _ as usize }, 28usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( args_how ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<command_struct>())).errmsg as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( command_struct ) , "::" , stringify ! ( errmsg ) ));
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_configfile_t {
+    /// < a getc()-like function
+    pub getch: ::std::option::Option<unsafe extern "C" fn(param: *mut ::libc::c_void) -> ::libc::c_int>,
+    pub getstr: ::std::option::Option<unsafe extern "C" fn(buf: *mut ::libc::c_void, bufsiz: usize, param: *mut ::libc::c_void) -> *mut ::libc::c_void>,
+    /// < a close handler function
+    pub close: ::std::option::Option<unsafe extern "C" fn(param: *mut ::libc::c_void) -> ::libc::c_int>,
+    /// < the argument passed to getch/getstr/close
+    pub param: *mut ::libc::c_void,
+    /// < the filename / description
+    pub name: *const ::libc::c_char,
+    /// < current line number, starting at 1
+    pub line_number: ::libc::c_uint,
+}
+
+#[test]
+fn bindgen_test_layout_ap_configfile_t() {
+    assert_eq!(::std::mem::size_of::<ap_configfile_t>(), 48usize, concat!( "Size of: " , stringify ! ( ap_configfile_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_configfile_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_configfile_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).getch as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( getch ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).getstr as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( getstr ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).close as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( close ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).param as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( param ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).name as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( name ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_configfile_t>())).line_number as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( ap_configfile_t ) , "::" , stringify ! ( line_number ) ));
+}
+
+/// This structure is passed to a command which is being invoked,
+/// to carry a large variety of miscellaneous data which is all of
+/// use to *somebody*...
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct cmd_parms_struct {
+    /// Argument to command from cmd_table
+    pub info: *mut ::libc::c_void,
+    /// Which allow-override bits are set
+    pub override_: ::libc::c_int,
+    /// Which methods are <Limit>ed
+    pub limited: apr_int64_t,
+    /// methods which are limited
+    pub limited_xmethods: *mut apr_array_header_t,
+    /// methods which are xlimited
+    pub xlimited: *mut ap_method_list_t,
+    /// Config file structure.
+    pub config_file: *mut ap_configfile_t,
+    /// the directive specifying this command
+    pub directive: *mut ap_directive_t,
+    /// Pool to allocate new storage in
+    pub pool: *mut apr_pool_t,
+    /// Pool for scratch memory; persists during configuration, but
+    /// wiped before the first request is served...
+    pub temp_pool: *mut apr_pool_t,
+    /// Server_rec being configured for
+    pub server: *mut server_rec,
+    /// If configuring for a directory, pathname of that directory.
+    /// NOPE!  That's what it meant previous to the existance of <Files>,
+    /// <Location> and regex matching.  Now the only usefulness that can be
+    /// derived from this field is whether a command is being called in a
+    /// server context (path == NULL) or being called in a dir context
+    /// (path != NULL).
+    pub path: *mut ::libc::c_char,
+    /// configuration command
+    pub cmd: *const command_rec,
+    /// per_dir_config vector passed to handle_command
+    pub context: *mut ap_conf_vector_t,
+    /// directive with syntax error
+    pub err_directive: *const ap_directive_t,
+    /// Which allow-override-opts bits are set
+    pub override_opts: ::libc::c_int,
+}
+
+#[test]
+fn bindgen_test_layout_cmd_parms_struct() {
+    assert_eq!(::std::mem::size_of::<cmd_parms_struct>(), 120usize, concat!( "Size of: " , stringify ! ( cmd_parms_struct ) ));
+    assert_eq!(::std::mem::align_of::<cmd_parms_struct>(), 8usize, concat!( "Alignment of " , stringify ! ( cmd_parms_struct ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).info as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( info ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).override_ as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( override_ ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).limited as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( limited ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).limited_xmethods as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( limited_xmethods ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).xlimited as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( xlimited ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).config_file as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( config_file ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).directive as *const _ as usize }, 48usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( directive ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).pool as *const _ as usize }, 56usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( pool ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).temp_pool as *const _ as usize }, 64usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( temp_pool ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).server as *const _ as usize }, 72usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( server ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).path as *const _ as usize }, 80usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( path ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).cmd as *const _ as usize }, 88usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( cmd ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).context as *const _ as usize }, 96usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( context ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).err_directive as *const _ as usize }, 104usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( err_directive ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<cmd_parms_struct>())).override_opts as *const _ as usize }, 112usize, concat!( "Offset of field: " , stringify ! ( cmd_parms_struct ) , "::" , stringify ! ( override_opts ) ));
+}
+
+/// Module structures.  Just about everything is dispatched through
+/// these, directly or indirectly (through the command and handler
+/// tables).
+pub type module = module_struct;
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct module_struct {
+    /// API version, *not* module version; check that module is
+    /// compatible with this version of the server.
+    pub version: ::libc::c_int,
+    /// API minor version. Provides API feature milestones. Not checked
+    /// during module init
+    pub minor_version: ::libc::c_int,
+    /// Index to this modules structures in config vectors.
+    pub module_index: ::libc::c_int,
+    /// The name of the module's C file
+    pub name: *const ::libc::c_char,
+    /// The handle for the DSO.  Internal use only
+    pub dynamic_load_handle: *mut ::libc::c_void,
+    /// A pointer to the next module in the list
+    /// @defvar module_struct *next
+    pub next: *mut module_struct,
+    /// Magic Cookie to identify a module structure;  It's mainly
+    /// important for the DSO facility (see also mod_so).
+    pub magic: ::libc::c_ulong,
+    /// Function to allow MPMs to re-write command line arguments.  This
+    /// hook is only available to MPMs.
+    /// @param The process that the server is running in.
+    pub rewrite_args: ::std::option::Option<unsafe extern "C" fn(process: *mut process_rec)>,
+    /// Function to allow all modules to create per directory configuration
+    /// structures.
+    /// @param p The pool to use for all allocations.
+    /// @param dir The directory currently being processed.
+    /// @return The per-directory structure created
+    pub create_dir_config: ::std::option::Option<unsafe extern "C" fn(p: *mut apr_pool_t, dir: *mut ::libc::c_char) -> *mut ::libc::c_void>,
+    /// Function to allow all modules to merge the per directory configuration
+    /// structures for two directories.
+    /// @param p The pool to use for all allocations.
+    /// @param base_conf The directory structure created for the parent directory.
+    /// @param new_conf The directory structure currently being processed.
+    /// @return The new per-directory structure created
+    pub merge_dir_config: ::std::option::Option<unsafe extern "C" fn(p: *mut apr_pool_t, base_conf: *mut ::libc::c_void, new_conf: *mut ::libc::c_void) -> *mut ::libc::c_void>,
+    /// Function to allow all modules to create per server configuration
+    /// structures.
+    /// @param p The pool to use for all allocations.
+    /// @param s The server currently being processed.
+    /// @return The per-server structure created
+    pub create_server_config: ::std::option::Option<unsafe extern "C" fn(p: *mut apr_pool_t, s: *mut server_rec) -> *mut ::libc::c_void>,
+    /// Function to allow all modules to merge the per server configuration
+    /// structures for two servers.
+    /// @param p The pool to use for all allocations.
+    /// @param base_conf The directory structure created for the parent directory.
+    /// @param new_conf The directory structure currently being processed.
+    /// @return The new per-directory structure created
+    pub merge_server_config: ::std::option::Option<unsafe extern "C" fn(p: *mut apr_pool_t, base_conf: *mut ::libc::c_void, new_conf: *mut ::libc::c_void) -> *mut ::libc::c_void>,
+    /// A command_rec table that describes all of the directives this module
+    /// defines.
+    pub cmds: *const command_rec,
+    /// A hook to allow modules to hook other points in the request processing.
+    /// In this function, modules should call the ap_hook_*() functions to
+    /// register an interest in a specific step in processing the current
+    /// request.
+    /// @param p the pool to use for all allocations
+    pub register_hooks: ::std::option::Option<unsafe extern "C" fn(p: *mut apr_pool_t)>,
+}
+
+#[test]
+fn bindgen_test_layout_module_struct() {
+    assert_eq!(::std::mem::size_of::<module_struct>(), 104usize, concat!( "Size of: " , stringify ! ( module_struct ) ));
+    assert_eq!(::std::mem::align_of::<module_struct>(), 8usize, concat!( "Alignment of " , stringify ! ( module_struct ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).version as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( version ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).minor_version as *const _ as usize }, 4usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( minor_version ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).module_index as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( module_index ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).name as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( name ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).dynamic_load_handle as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( dynamic_load_handle ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).next as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).magic as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( magic ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).rewrite_args as *const _ as usize }, 48usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( rewrite_args ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).create_dir_config as *const _ as usize }, 56usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( create_dir_config ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).merge_dir_config as *const _ as usize }, 64usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( merge_dir_config ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).create_server_config as *const _ as usize }, 72usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( create_server_config ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).merge_server_config as *const _ as usize }, 80usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( merge_server_config ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).cmds as *const _ as usize }, 88usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( cmds ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<module_struct>())).register_hooks as *const _ as usize }, 96usize, concat!( "Offset of field: " , stringify ! ( module_struct ) , "::" , stringify ! ( register_hooks ) ));
+}
+
+extern "C" {
+    /// Generic accessors for other modules to get at their own module-specific
+/// data
+/// @param conf_vector The vector in which the modules configuration is stored.
+/// usually r->per_dir_config or s->module_config
+/// @param m The module to get the data for.
+/// @return The module-specific data
+    pub fn ap_get_module_config(cv: *const ap_conf_vector_t, m: *const module) -> *mut ::libc::c_void;
+}
+
+extern "C" {
+    /// Generic accessors for other modules to set at their own module-specific
+/// data
+/// @param conf_vector The vector in which the modules configuration is stored.
+/// usually r->per_dir_config or s->module_config
+/// @param m The module to set the data for.
+/// @param val The module-specific data to set
+    pub fn ap_set_module_config(cv: *mut ap_conf_vector_t, m: *const module, val: *mut ::libc::c_void);
+}
+
+extern "C" {
+    /// Generic command handling function for strings
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive
+/// @return An error string or NULL on success
+    pub fn ap_set_string_slot(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Generic command handling function for integers
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive
+/// @return An error string or NULL on success
+    pub fn ap_set_int_slot(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Return true if the specified method is limited by being listed in
+/// a <Limit> container, or by *not* being listed in a <LimiteExcept>
+/// container.
+///
+/// @param   method  Pointer to a string specifying the method to check.
+/// @param   cmd     Pointer to the cmd_parms structure passed to the
+/// directive handler.
+/// @return  0 if the method is not limited in the current scope
+    pub fn ap_method_is_limited(cmd: *mut cmd_parms, method: *const ::libc::c_char) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Generic command handling function for strings, always sets the value
+/// to a lowercase string
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive
+/// @return An error string or NULL on success
+    pub fn ap_set_string_slot_lower(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Generic command handling function for flags
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive (either 1 or 0)
+/// @return An error string or NULL on success
+    pub fn ap_set_flag_slot(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: ::libc::c_int) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Generic command handling function for files
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive
+/// @return An error string or NULL on success
+    pub fn ap_set_file_slot(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Generic command handling function to respond with cmd->help as an error
+/// @param cmd The command parameters for this directive
+/// @param struct_ptr pointer into a given type
+/// @param arg The argument to the directive
+/// @return The cmd->help value as the error string
+/// @tip This allows simple declarations such as;
+/// <pre>
+/// AP_INIT_RAW_ARGS("Foo", ap_set_deprecated, NULL, OR_ALL,
+/// "The Foo directive is no longer supported, use Bar"),
+/// </pre>
+    pub fn ap_set_deprecated(cmd: *mut cmd_parms, struct_ptr: *mut ::libc::c_void, arg: *const ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// For modules which need to read config files, open logs, etc. this returns
+/// the canonical form of fname made absolute to ap_server_root.
+/// @param p pool to allocate data from
+/// @param fname The file name
+    pub fn ap_server_root_relative(p: *mut apr_pool_t, fname: *const ::libc::c_char) -> *mut ::libc::c_char;
+}
+
+extern "C" {
+    /// Add a module to the server
+/// @param m The module structure of the module to add
+/// @param p The pool of the same lifetime as the module
+    pub fn ap_add_module(m: *mut module, p: *mut apr_pool_t) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Remove a module from the server.  There are some caveats:
+/// when the module is removed, its slot is lost so all the current
+/// per-dir and per-server configurations are invalid. So we should
+/// only ever call this function when you are invalidating almost
+/// all our current data. I.e. when doing a restart.
+/// @param m the module structure of the module to remove
+    pub fn ap_remove_module(m: *mut module);
+}
+
+extern "C" {
+    /// Add a module to the chained modules list and the list of loaded modules
+/// @param m The module structure of the module to add
+/// @param p The pool with the same lifetime as the module
+    pub fn ap_add_loaded_module(mod_: *mut module, p: *mut apr_pool_t) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Remove a module fromthe chained modules list and the list of loaded modules
+/// @param m the module structure of the module to remove
+    pub fn ap_remove_loaded_module(mod_: *mut module);
+}
+
+extern "C" {
+    /// Find the name of the specified module
+/// @param m The module to get the name for
+/// @return the name of the module
+    pub fn ap_find_module_name(m: *mut module) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Find a module based on the name of the module
+/// @param name the name of the module
+/// @return the module structure if found, NULL otherwise
+    pub fn ap_find_linked_module(name: *const ::libc::c_char) -> *mut module;
+}
+
+extern "C" {
+    /// Open a ap_configfile_t as apr_file_t
+/// @param ret_cfg open ap_configfile_t struct pointer
+/// @param p The pool to allocate the structure from
+/// @param name the name of the file to open
+    pub fn ap_pcfg_openfile(ret_cfg: *mut *mut ap_configfile_t, p: *mut apr_pool_t, name: *const ::libc::c_char) -> apr_status_t;
+}
+
+extern "C" {
+    /// Allocate a ap_configfile_t handle with user defined functions and params
+/// @param p The pool to allocate from
+/// @param descr The name of the file
+/// @param param The argument passed to getch/getstr/close
+/// @param getc_func The getch function
+/// @param gets_func The getstr function
+/// @param close_func The close function
+    pub fn ap_pcfg_open_custom(p: *mut apr_pool_t, descr: *const ::libc::c_char, param: *mut ::libc::c_void, getc_func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::libc::c_void) -> ::libc::c_int>, gets_func: ::std::option::Option<unsafe extern "C" fn(buf: *mut ::libc::c_void, bufsiz: usize, param: *mut ::libc::c_void) -> *mut ::libc::c_void>, close_func: ::std::option::Option<unsafe extern "C" fn(param: *mut ::libc::c_void) -> ::libc::c_int>) -> *mut ap_configfile_t;
+}
+
+extern "C" {
+    /// Read one line from open ap_configfile_t, strip LF, increase line number
+/// @param buf place to store the line read
+/// @param bufsize size of the buffer
+/// @param cfp File to read from
+/// @return 1 on success, 0 on failure
+    pub fn ap_cfg_getline(buf: *mut ::libc::c_char, bufsize: usize, cfp: *mut ap_configfile_t) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Read one char from open configfile_t, increase line number upon LF
+/// @param cfp The file to read from
+/// @return the character read
+    pub fn ap_cfg_getc(cfp: *mut ap_configfile_t) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Detach from open ap_configfile_t, calling the close handler
+/// @param cfp The file to close
+/// @return 1 on sucess, 0 on failure
+    pub fn ap_cfg_closefile(cfp: *mut ap_configfile_t) -> ::libc::c_int;
+}
+
+extern "C" {
+    /// Read all data between the current <foo> and the matching </foo>.  All
+/// of this data is forgotten immediately.
+/// @param cmd The cmd_parms to pass to the directives inside the container
+/// @param directive The directive name to read until
+/// @return Error string on failure, NULL on success
+    pub fn ap_soak_end_container(cmd: *mut cmd_parms, directive: *mut ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Read all data between the current <foo> and the matching </foo> and build
+/// a config tree from it
+/// @param p pool to allocate from
+/// @param temp_pool Temporary pool to allocate from
+/// @param parms The cmd_parms to pass to all directives read
+/// @param current The current node in the tree
+/// @param curr_parent The current parent node
+/// @param orig_directive The directive to read until hit.
+/// @return Error string on failure, NULL on success
+    pub fn ap_build_cont_config(p: *mut apr_pool_t, temp_pool: *mut apr_pool_t, parms: *mut cmd_parms, current: *mut *mut ap_directive_t, curr_parent: *mut *mut ap_directive_t, orig_directive: *mut ::libc::c_char) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Build a config tree from a config file
+/// @param parms The cmd_parms to pass to all of the directives in the file
+/// @param conf_pool The pconf pool
+/// @param temp_pool The temporary pool
+/// @param conftree Place to store the root node of the config tree
+/// @return Error string on erro, NULL otherwise
+    pub fn ap_build_config(parms: *mut cmd_parms, conf_pool: *mut apr_pool_t, temp_pool: *mut apr_pool_t, conftree: *mut *mut ap_directive_t) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// Walk a config tree and setup the server's internal structures
+/// @param conftree The config tree to walk
+/// @param parms The cmd_parms to pass to all functions
+/// @param section_vector The per-section config vector.
+/// @return Error string on error, NULL otherwise
+    pub fn ap_walk_config(conftree: *mut ap_directive_t, parms: *mut cmd_parms, section_vector: *mut ap_conf_vector_t) -> *const ::libc::c_char;
+}
+
+extern "C" {
+    /// @defgroup ap_check_cmd_context Check command context
+/// @{
+/// /
+/// /**
+/// Check the context a command is used in.
+/// @param cmd The command to check
+/// @param forbidden Where the command is forbidden.
+/// @return Error string on error, NULL on success
+    pub fn ap_check_cmd_context(cmd: *mut cmd_parms, forbidden: ::libc::c_uint) -> *const ::libc::c_char;
+}
+
+pub type ap_HOOK_header_parser_t = ::std::option::Option<unsafe extern "C" fn(r: *mut request_rec) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_header_parser(pf: ap_HOOK_header_parser_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_header_parser(r: *mut request_rec) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_header_parser() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_header_parser_t { pub pFunc: ap_HOOK_header_parser_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_header_parser_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_header_parser_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_header_parser_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_header_parser_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_header_parser_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_header_parser_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_header_parser_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_header_parser_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_header_parser_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_header_parser_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_header_parser_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_header_parser_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_header_parser_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_header_parser_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_header_parser_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_pre_config_t = ::std::option::Option<unsafe extern "C" fn(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_pre_config(pf: ap_HOOK_pre_config_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_pre_config(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_pre_config() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_pre_config_t { pub pFunc: ap_HOOK_pre_config_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_pre_config_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_pre_config_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_pre_config_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_pre_config_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_pre_config_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_pre_config_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_pre_config_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_pre_config_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_pre_config_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_pre_config_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_pre_config_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_pre_config_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_pre_config_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_pre_config_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_pre_config_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_test_config_t = ::std::option::Option<unsafe extern "C" fn(pconf: *mut apr_pool_t, s: *mut server_rec)>;
+
+extern "C" { pub fn ap_hook_test_config(pf: ap_HOOK_test_config_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_test_config(pconf: *mut apr_pool_t, s: *mut server_rec); }
+
+extern "C" { pub fn ap_hook_get_test_config() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_test_config_t { pub pFunc: ap_HOOK_test_config_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_test_config_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_test_config_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_test_config_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_test_config_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_test_config_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_test_config_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_test_config_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_test_config_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_test_config_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_test_config_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_test_config_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_test_config_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_test_config_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_test_config_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_test_config_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_post_config_t = ::std::option::Option<unsafe extern "C" fn(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t, s: *mut server_rec) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_post_config(pf: ap_HOOK_post_config_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_post_config(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t, s: *mut server_rec) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_post_config() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_post_config_t { pub pFunc: ap_HOOK_post_config_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_post_config_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_post_config_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_post_config_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_post_config_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_post_config_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_post_config_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_post_config_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_post_config_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_post_config_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_post_config_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_post_config_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_post_config_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_post_config_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_post_config_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_post_config_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_open_logs_t = ::std::option::Option<unsafe extern "C" fn(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t, s: *mut server_rec) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_open_logs(pf: ap_HOOK_open_logs_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_open_logs(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t, s: *mut server_rec) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_open_logs() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_open_logs_t { pub pFunc: ap_HOOK_open_logs_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_open_logs_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_open_logs_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_open_logs_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_open_logs_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_open_logs_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_open_logs_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_open_logs_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_open_logs_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_open_logs_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_open_logs_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_open_logs_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_open_logs_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_open_logs_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_open_logs_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_open_logs_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_child_init_t = ::std::option::Option<unsafe extern "C" fn(pchild: *mut apr_pool_t, s: *mut server_rec)>;
+
+extern "C" { pub fn ap_hook_child_init(pf: ap_HOOK_child_init_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_child_init(pchild: *mut apr_pool_t, s: *mut server_rec); }
+
+extern "C" { pub fn ap_hook_get_child_init() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_child_init_t { pub pFunc: ap_HOOK_child_init_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_child_init_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_child_init_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_child_init_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_child_init_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_child_init_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_child_init_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_child_init_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_child_init_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_child_init_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_child_init_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_child_init_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_child_init_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_child_init_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_child_init_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_child_init_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_handler_t = ::std::option::Option<unsafe extern "C" fn(r: *mut request_rec) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_handler(pf: ap_HOOK_handler_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_handler(r: *mut request_rec) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_handler() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_handler_t { pub pFunc: ap_HOOK_handler_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_handler_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_handler_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_handler_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_handler_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_handler_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_handler_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_handler_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_handler_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_handler_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_handler_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_handler_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_handler_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_handler_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_handler_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_handler_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_quick_handler_t = ::std::option::Option<unsafe extern "C" fn(r: *mut request_rec, lookup_uri: ::libc::c_int) -> ::libc::c_int>;
+
+extern "C" { pub fn ap_hook_quick_handler(pf: ap_HOOK_quick_handler_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_quick_handler(r: *mut request_rec, lookup_uri: ::libc::c_int) -> ::libc::c_int; }
+
+extern "C" { pub fn ap_hook_get_quick_handler() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_quick_handler_t { pub pFunc: ap_HOOK_quick_handler_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_quick_handler_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_quick_handler_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_quick_handler_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_quick_handler_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_quick_handler_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_quick_handler_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_quick_handler_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_quick_handler_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_quick_handler_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_quick_handler_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_quick_handler_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_quick_handler_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_quick_handler_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_quick_handler_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_quick_handler_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
+pub type ap_HOOK_optional_fn_retrieve_t = ::std::option::Option<unsafe extern "C" fn()>;
+
+extern "C" { pub fn ap_hook_optional_fn_retrieve(pf: ap_HOOK_optional_fn_retrieve_t, aszPre: *const *const ::libc::c_char, aszSucc: *const *const ::libc::c_char, nOrder: ::libc::c_int); }
+
+extern "C" { pub fn ap_run_optional_fn_retrieve(); }
+
+extern "C" { pub fn ap_hook_get_optional_fn_retrieve() -> *mut apr_array_header_t; }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_LINK_optional_fn_retrieve_t { pub pFunc: ap_HOOK_optional_fn_retrieve_t, pub szName: *const ::libc::c_char, pub aszPredecessors: *const *const ::libc::c_char, pub aszSuccessors: *const *const ::libc::c_char, pub nOrder: ::libc::c_int }
+
+#[test]
+fn bindgen_test_layout_ap_LINK_optional_fn_retrieve_t() {
+    assert_eq!(::std::mem::size_of::<ap_LINK_optional_fn_retrieve_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_LINK_optional_fn_retrieve_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_optional_fn_retrieve_t>())).pFunc as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) , "::" , stringify ! ( pFunc ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_optional_fn_retrieve_t>())).szName as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) , "::" , stringify ! ( szName ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_optional_fn_retrieve_t>())).aszPredecessors as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) , "::" , stringify ! ( aszPredecessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_optional_fn_retrieve_t>())).aszSuccessors as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) , "::" , stringify ! ( aszSuccessors ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_LINK_optional_fn_retrieve_t>())).nOrder as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_LINK_optional_fn_retrieve_t ) , "::" , stringify ! ( nOrder ) ));
+}
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __locale_data { pub _address: u8 }
@@ -5165,9 +6545,206 @@ pub struct ap_conf_vector_t { pub _address: u8 }
 #[derive(Debug, Copy, Clone)]
 pub struct hostent { pub _address: u8 }
 
-/// A list of output filters to be used for this request
+/////////////////////////////////////////
+
+/// The filter should return at most readbytes data.
+pub const ap_input_mode_t_AP_MODE_READBYTES: ap_input_mode_t = 0;
+/// The filter should return at most one line of CRLF data.
+/// (If a potential line is too long or no CRLF is found, the
+/// filter may return partial data).
+pub const ap_input_mode_t_AP_MODE_GETLINE: ap_input_mode_t = 1;
+/// The filter should implicitly eat any CRLF pairs that it sees.
+pub const ap_input_mode_t_AP_MODE_EATCRLF: ap_input_mode_t = 2;
+/// The filter read should be treated as speculative and any returned
+/// data should be stored for later retrieval in another mode.
+pub const ap_input_mode_t_AP_MODE_SPECULATIVE: ap_input_mode_t = 3;
+/// The filter read should be exhaustive and read until it can not
+/// read any more.
+/// Use this mode with extreme caution.
+pub const ap_input_mode_t_AP_MODE_EXHAUSTIVE: ap_input_mode_t = 4;
+/// The filter should initialize the connection if needed,
+/// NNTP or FTP over SSL for example.
+pub const ap_input_mode_t_AP_MODE_INIT: ap_input_mode_t = 5;
+
+/// @brief input filtering modes
+pub type ap_input_mode_t = u32;
+/// @name Filter callbacks
+///
+/// This function type is used for filter callbacks. It will be passed a
+/// pointer to "this" filter, and a "bucket" containing the content to be
+/// filtered.
+///
+/// In filter->ctx, the callback will find its context. This context is
+/// provided here, so that a filter may be installed multiple times, each
+/// receiving its own per-install context pointer.
+///
+/// Callbacks are associated with a filter definition, which is specified
+/// by name. See ap_register_input_filter() and ap_register_output_filter()
+/// for setting the association between a name for a filter and its
+/// associated callback (and other information).
+///
+/// If the initialization function argument passed to the registration
+/// functions is non-NULL, it will be called iff the filter is in the input
+/// or output filter chains and before any data is generated to allow the
+/// filter to prepare for processing.
+///
+/// The *bucket structure (and all those referenced by ->next and ->prev)
+/// should be considered "const". The filter is allowed to modify the
+/// next/prev to insert/remove/replace elements in the bucket list, but
+/// the types and values of the individual buckets should not be altered.
+///
+/// For the input and output filters, the return value of a filter should be
+/// an APR status value.  For the init function, the return value should
+/// be an HTTP error code or OK if it was successful.
+///
+/// @ingroup filter
+/// @{
+pub type ap_out_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t, b: *mut apr_bucket_brigade) -> apr_status_t>;
+pub type ap_in_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t, b: *mut apr_bucket_brigade, mode: ap_input_mode_t, block: apr_read_type_e, readbytes: apr_off_t) -> apr_status_t>;
+pub type ap_init_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t) -> ::libc::c_int>;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union ap_filter_func { pub out_func: ap_out_filter_func, pub in_func: ap_in_filter_func, _bindgen_union_align: u64 }
+
+#[test]
+fn bindgen_test_layout_ap_filter_func() {
+    assert_eq!(::std::mem::size_of::<ap_filter_func>(), 8usize, concat!( "Size of: " , stringify ! ( ap_filter_func ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_func>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_func>())).out_func as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_func ) , "::" , stringify ! ( out_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_func>())).in_func as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_func ) , "::" , stringify ! ( in_func ) ));
+}
+
+/// These filters are used to alter the content that is passed through
+/// them. Examples are SSI or PHP.
+pub const ap_filter_type_AP_FTYPE_RESOURCE: ap_filter_type = 10;
+/// These filters are used to alter the content as a whole, but after all
+/// AP_FTYPE_RESOURCE filters are executed.  These filters should not
+/// change the content-type.  An example is deflate.
+pub const ap_filter_type_AP_FTYPE_CONTENT_SET: ap_filter_type = 20;
+/// These filters are used to handle the protocol between server and
+/// client.  Examples are HTTP and POP.
+pub const ap_filter_type_AP_FTYPE_PROTOCOL: ap_filter_type = 30;
+/// These filters implement transport encodings (e.g., chunking).
+pub const ap_filter_type_AP_FTYPE_TRANSCODE: ap_filter_type = 40;
+/// These filters will alter the content, but in ways that are
+/// more strongly associated with the connection.  Examples are
+/// splitting an HTTP connection into multiple requests and
+/// buffering HTTP responses across multiple requests.
+///
+/// It is important to note that these types of filters are not
+/// allowed in a sub-request. A sub-request's output can certainly
+/// be filtered by ::AP_FTYPE_RESOURCE filters, but all of the "final
+/// processing" is determined by the main request.
+pub const ap_filter_type_AP_FTYPE_CONNECTION: ap_filter_type = 50;
+/// These filters don't alter the content.  They are responsible for
+/// sending/receiving data to/from the client.
+pub const ap_filter_type_AP_FTYPE_NETWORK: ap_filter_type = 60;
+
+/// Filters have different types/classifications. These are used to group
+/// and sort the filters to properly sequence their operation.
+///
+/// The types have a particular sort order, which allows us to insert them
+/// into the filter chain in a determistic order. Within a particular grouping,
+/// the ordering is equivalent to the order of calls to ap_add_*_filter().
+pub type ap_filter_type = u32;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct ap_filter_t { pub _address: u8 }
+pub struct ap_filter_provider_t { _unused: [u8; 0] }
+
+/// @brief This structure is used for recording information about the
+/// registered filters. It associates a name with the filter's callback
+/// and filter type.
+///
+/// At the moment, these are simply linked in a chain, so a ->next pointer
+/// is available.
+///
+/// It is used for any filter that can be inserted in the filter chain.
+/// This may be either a httpd-2.0 filter or a mod_filter harness.
+/// In the latter case it contains dispatch, provider and protocol information.
+/// In the former case, the new fields (from dispatch) are ignored.
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct ap_filter_rec_t {
+    /// The registered name for this filter
+    pub name: *const ::libc::c_char,
+    /// The function to call when this filter is invoked.
+    pub filter_func: ap_filter_func,
+    /// The function to call directly before the handlers are invoked
+    /// for a request.  The init function is called once directly
+    /// before running the handlers for a request or subrequest.  The
+    /// init function is never called for a connection filter (with
+    /// ftype >= AP_FTYPE_CONNECTION).  Any use of this function for
+    /// filters for protocols other than HTTP is specified by the
+    /// module supported that protocol.
+    pub filter_init_func: ap_init_filter_func,
+    /// The type of filter, either AP_FTYPE_CONTENT or AP_FTYPE_CONNECTION.
+    /// An AP_FTYPE_CONTENT filter modifies the data based on information
+    /// found in the content.  An AP_FTYPE_CONNECTION filter modifies the
+    /// data based on the type of connection.
+    pub ftype: ap_filter_type,
+    /// The next filter_rec in the list
+    pub next: *mut ap_filter_rec_t,
+    /// Providers for this filter
+    pub providers: *mut ap_filter_provider_t,
+    /// Trace level for this filter
+    pub debug: ::libc::c_int,
+    /// Protocol flags for this filter
+    pub proto_flags: ::libc::c_uint,
+}
+
+#[test]
+fn bindgen_test_layout_ap_filter_rec_t() {
+    assert_eq!(::std::mem::size_of::<ap_filter_rec_t>(), 56usize, concat!( "Size of: " , stringify ! ( ap_filter_rec_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_rec_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_rec_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).name as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( name ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).filter_func as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( filter_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).filter_init_func as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( filter_init_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).ftype as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( ftype ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).next as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).providers as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( providers ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).debug as *const _ as usize }, 48usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( debug ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).proto_flags as *const _ as usize }, 52usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( proto_flags ) ));
+}
+
+/// @brief The representation of a filter chain.
+///
+/// Each request has a list
+/// of these structures which are called in turn to filter the data.  Sub
+/// requests get an exact copy of the main requests filter chain.
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ap_filter_t {
+    /// The internal representation of this filter.  This includes
+    /// the filter's name, type, and the actual function pointer.
+    pub frec: *mut ap_filter_rec_t,
+    /// A place to store any data associated with the current filter
+    pub ctx: *mut ::libc::c_void,
+    /// The next filter in the chain
+    pub next: *mut ap_filter_t,
+    /// The request_rec associated with the current filter.  If a sub-request
+    /// adds filters, then the sub-request is the request associated with the
+    /// filter.
+    pub r: *mut request_rec,
+    /// The conn_rec associated with the current filter.  This is analogous
+    /// to the request_rec, except that it is used for input filtering.
+    pub c: *mut conn_rec,
+}
+
+#[test]
+fn bindgen_test_layout_ap_filter_t() {
+    assert_eq!(::std::mem::size_of::<ap_filter_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_filter_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).frec as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( frec ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).ctx as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( ctx ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).next as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).r as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( r ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).c as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( c ) ));
+}
 
 
+// didn't get converted
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct apr_thread_t { _unused: [u8; 0] }

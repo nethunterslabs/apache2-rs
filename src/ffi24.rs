@@ -3495,6 +3495,7 @@ pub const IPPORT_USERRESERVED: _bindgen_ty_15 = 5000;
 
 pub type _bindgen_ty_15 = u32;
 
+//todo:  nuke and use libc in6
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct in6_addr { pub __in6_u: in6_addr__bindgen_ty_1 }
@@ -3545,7 +3546,7 @@ fn bindgen_test_layout_sockaddr_in() {
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct sockaddr_in6 { pub sin6_family: sa_family_t, pub sin6_port: in_port_t, pub sin6_flowinfo: u32, pub sin6_addr: in6_addr, pub sin6_scope_id: u32 }
+pub struct sockaddr_in6 { pub sin6_family: sa_family_t, pub sin6_port: in_port_t, pub sin6_flowinfo: u32, pub sin6_addr: ::libc::in6_addr, pub sin6_scope_id: u32 }
 
 #[test]
 fn bindgen_test_layout_sockaddr_in6() {
@@ -6221,164 +6222,205 @@ pub struct ap_conf_vector_t { pub _address: u8 }
 #[derive(Debug, Copy, Clone)]
 pub struct hostent { pub _address: u8 }
 
-/// A list of output filters to be used for this request
+
+/////////////////////////////
+/// The filter should return at most readbytes data.
+pub const ap_input_mode_t_AP_MODE_READBYTES: ap_input_mode_t = 0;
+/// The filter should return at most one line of CRLF data.
+/// (If a potential line is too long or no CRLF is found, the
+/// filter may return partial data).
+pub const ap_input_mode_t_AP_MODE_GETLINE: ap_input_mode_t = 1;
+/// The filter should implicitly eat any CRLF pairs that it sees.
+pub const ap_input_mode_t_AP_MODE_EATCRLF: ap_input_mode_t = 2;
+/// The filter read should be treated as speculative and any returned
+/// data should be stored for later retrieval in another mode.
+pub const ap_input_mode_t_AP_MODE_SPECULATIVE: ap_input_mode_t = 3;
+/// The filter read should be exhaustive and read until it can not
+/// read any more.
+/// Use this mode with extreme caution.
+pub const ap_input_mode_t_AP_MODE_EXHAUSTIVE: ap_input_mode_t = 4;
+/// The filter should initialize the connection if needed,
+/// NNTP or FTP over SSL for example.
+pub const ap_input_mode_t_AP_MODE_INIT: ap_input_mode_t = 5;
+
+/// @brief input filtering modes
+pub type ap_input_mode_t = u32;
+/// @name Filter callbacks
+///
+/// This function type is used for filter callbacks. It will be passed a
+/// pointer to "this" filter, and a "bucket brigade" containing the content
+/// to be filtered.
+///
+/// In filter->ctx, the callback will find its context. This context is
+/// provided here, so that a filter may be installed multiple times, each
+/// receiving its own per-install context pointer.
+///
+/// Callbacks are associated with a filter definition, which is specified
+/// by name. See ap_register_input_filter() and ap_register_output_filter()
+/// for setting the association between a name for a filter and its
+/// associated callback (and other information).
+///
+/// If the initialization function argument passed to the registration
+/// functions is non-NULL, it will be called iff the filter is in the input
+/// or output filter chains and before any data is generated to allow the
+/// filter to prepare for processing.
+///
+/// The bucket brigade always belongs to the caller, but the filter
+/// is free to use the buckets within it as it sees fit. Normally,
+/// the brigade will be returned empty. Buckets *may not* be retained
+/// between successive calls to the filter unless they have been
+/// "set aside" with a call apr_bucket_setaside. Typically this will
+/// be done with ap_save_brigade(). Buckets removed from the brigade
+/// become the responsibility of the filter, which must arrange for
+/// them to be deleted, either by doing so directly or by inserting
+/// them in a brigade which will subsequently be destroyed.
+///
+/// For the input and output filters, the return value of a filter should be
+/// an APR status value.  For the init function, the return value should
+/// be an HTTP error code or OK if it was successful.
+///
+/// @ingroup filter
+/// @{
+pub type ap_out_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t, b: *mut apr_bucket_brigade) -> apr_status_t>;
+pub type ap_in_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t, b: *mut apr_bucket_brigade, mode: ap_input_mode_t, block: apr_read_type_e, readbytes: apr_off_t) -> apr_status_t>;
+pub type ap_init_filter_func = ::std::option::Option<unsafe extern "C" fn(f: *mut ap_filter_t) -> ::libc::c_int>;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union ap_filter_func { pub out_func: ap_out_filter_func, pub in_func: ap_in_filter_func, _bindgen_union_align: u64 }
+
+#[test]
+fn bindgen_test_layout_ap_filter_func() {
+    assert_eq!(::std::mem::size_of::<ap_filter_func>(), 8usize, concat!( "Size of: " , stringify ! ( ap_filter_func ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_func>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_func>())).out_func as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_func ) , "::" , stringify ! ( out_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_func>())).in_func as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_func ) , "::" , stringify ! ( in_func ) ));
+}
+
+/// These filters are used to alter the content that is passed through
+/// them. Examples are SSI or PHP.
+pub const ap_filter_type_AP_FTYPE_RESOURCE: ap_filter_type = 10;
+/// These filters are used to alter the content as a whole, but after all
+/// AP_FTYPE_RESOURCE filters are executed.  These filters should not
+/// change the content-type.  An example is deflate.
+pub const ap_filter_type_AP_FTYPE_CONTENT_SET: ap_filter_type = 20;
+/// These filters are used to handle the protocol between server and
+/// client.  Examples are HTTP and POP.
+pub const ap_filter_type_AP_FTYPE_PROTOCOL: ap_filter_type = 30;
+/// These filters implement transport encodings (e.g., chunking).
+pub const ap_filter_type_AP_FTYPE_TRANSCODE: ap_filter_type = 40;
+/// These filters will alter the content, but in ways that are
+/// more strongly associated with the connection.  Examples are
+/// splitting an HTTP connection into multiple requests and
+/// buffering HTTP responses across multiple requests.
+///
+/// It is important to note that these types of filters are not
+/// allowed in a sub-request. A sub-request's output can certainly
+/// be filtered by ::AP_FTYPE_RESOURCE filters, but all of the "final
+/// processing" is determined by the main request.
+pub const ap_filter_type_AP_FTYPE_CONNECTION: ap_filter_type = 50;
+/// These filters don't alter the content.  They are responsible for
+/// sending/receiving data to/from the client.
+pub const ap_filter_type_AP_FTYPE_NETWORK: ap_filter_type = 60;
+
+/// Filters have different types/classifications. These are used to group
+/// and sort the filters to properly sequence their operation.
+///
+/// The types have a particular sort order, which allows us to insert them
+/// into the filter chain in a determistic order. Within a particular grouping,
+/// the ordering is equivalent to the order of calls to ap_add_*_filter().
+pub type ap_filter_type = u32;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct ap_filter_t { pub _address: u8 }
+pub struct ap_filter_provider_t { _unused: [u8; 0] }
 
-
-
-/*
-
-
+/// @brief This structure is used for recording information about the
+/// registered filters. It associates a name with the filter's callback
+/// and filter type.
+///
+/// At the moment, these are simply linked in a chain, so a ->next pointer
+/// is available.
+///
+/// It is used for any filter that can be inserted in the filter chain.
+/// This may be either a httpd-2.0 filter or a mod_filter harness.
+/// In the latter case it contains dispatch, provider and protocol information.
+/// In the former case, the new fields (from dispatch) are ignored.
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct request_rec {
-    pub pool: *mut apr_pool_t,
-    pub connection: *mut conn_rec,
-    pub server: *mut server_rec,
-    pub next: *mut request_rec,
-    pub prev: *mut request_rec,
-    pub main: *mut request_rec,
-    pub the_request: *mut c_char,
-    pub assbackwards: c_int,
-    pub proxyreq: c_int,
-    pub header_only: c_int,
-    pub proto_num: c_int,
-    pub protocol: *mut c_char,
-    pub hostname: *const c_char,
-    pub request_time: apr_time_t,
-    pub status_line: *const c_char,
-    pub status: c_int,
-    pub method_number: c_int,
-    pub method: *const c_char,
-    pub allowed: apr_int64_t,
-    pub allowed_xmethods: *mut apr_array_header_t,
-    pub allowed_methods: *mut ap_method_list_t,
-    pub sent_bodyct: apr_off_t,
-    pub bytes_sent: apr_off_t,
-    pub mtime: apr_time_t,
-    pub range: *const c_char,
-    pub clength: apr_off_t,
-    pub chunked: c_int,
-    pub read_body: c_int,
-    pub read_chunked: c_int,
-    pub expecting_100: c_uint,
-    pub kept_body: *mut apr_bucket_brigade,
-    pub body_table: *mut apr_table_t,
-    pub remaining: apr_off_t,
-    pub read_length: apr_off_t,
-    pub headers_in: *mut apr_table_t,
-    pub headers_out: *mut apr_table_t,
-    pub err_headers_out: *mut apr_table_t,
-    pub subprocess_env: *mut apr_table_t,
-    pub notes: *mut apr_table_t,
-    pub content_type: *const c_char,
-    pub handler: *const c_char,
-    pub content_encoding: *const c_char,
-    pub content_languages: *mut apr_array_header_t,
-    pub vlist_validator: *mut c_char,
-    pub user: *mut c_char,
-    pub ap_auth_type: *mut c_char,
-    pub unparsed_uri: *mut c_char,
-    pub uri: *mut c_char,
-    pub filename: *mut c_char,
-    pub canonical_filename: *mut c_char,
-    pub path_info: *mut c_char,
-    pub args: *mut c_char,
-    pub used_path_info: c_int,
-    pub eos_sent: c_int,
-    pub per_dir_config: *mut ap_conf_vector_t,
-    pub request_config: *mut ap_conf_vector_t,
-    pub log: *const ap_logconf,
-    pub log_id: *const c_char,
-    pub htaccess: *const htaccess_result,
-    pub output_filters: *mut ap_filter_t,
-    pub input_filters: *mut ap_filter_t,
-    pub proto_output_filters: *mut ap_filter_t,
-    pub proto_input_filters: *mut ap_filter_t,
-    pub no_cache: c_int,
-    pub no_local_copy: c_int,
-    pub invoke_mtx: *mut apr_thread_mutex_t,
-    pub parsed_uri: apr_uri_t,
-    pub finfo: apr_finfo_t,
-    pub useragent_addr: *mut apr_sockaddr_t,
-    pub useragent_ip: *mut c_char,
-    pub trailers_in: *mut apr_table_t,
-    pub trailers_out: *mut apr_table_t,
+pub struct ap_filter_rec_t {
+    /// The registered name for this filter
+    pub name: *const ::libc::c_char,
+    /// The function to call when this filter is invoked.
+    pub filter_func: ap_filter_func,
+    /// The function to call directly before the handlers are invoked
+    /// for a request.  The init function is called once directly
+    /// before running the handlers for a request or subrequest.  The
+    /// init function is never called for a connection filter (with
+    /// ftype >= AP_FTYPE_CONNECTION).  Any use of this function for
+    /// filters for protocols other than HTTP is specified by the
+    /// module supported that protocol.
+    pub filter_init_func: ap_init_filter_func,
+    /// The next filter_rec in the list
+    pub next: *mut ap_filter_rec_t,
+    /// Providers for this filter
+    pub providers: *mut ap_filter_provider_t,
+    /// The type of filter, either AP_FTYPE_CONTENT or AP_FTYPE_CONNECTION.
+    /// An AP_FTYPE_CONTENT filter modifies the data based on information
+    /// found in the content.  An AP_FTYPE_CONNECTION filter modifies the
+    /// data based on the type of connection.
+    pub ftype: ap_filter_type,
+    /// Trace level for this filter
+    pub debug: ::libc::c_int,
+    /// Protocol flags for this filter
+    pub proto_flags: ::libc::c_uint,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct conn_rec {
-    pub pool: *mut apr_pool_t,
-    pub base_server: *mut server_rec,
-    pub vhost_lookup_data: *mut c_void,
-    pub local_addr: *mut apr_sockaddr_t,
-    pub client_addr: *mut apr_sockaddr_t,
-    pub client_ip: *mut c_char,
-    pub remote_host: *mut c_char,
-    pub remote_logname: *mut c_char,
-    pub local_ip: *mut c_char,
-    pub local_host: *mut c_char,
-    pub id: c_long,
-    pub conn_config: *mut ap_conf_vector_t,
-    pub notes: *mut apr_table_t,
-    pub input_filters: *mut ap_filter_t,
-    pub output_filters: *mut ap_filter_t,
-    pub sbh: *mut c_void,
-    pub bucket_alloc: *mut apr_bucket_alloc_t,
-    pub cs: *mut conn_state_t,
-    pub data_in_input_filters: c_int,
-    pub data_in_output_filters: c_int,
-    pub _bindgen_bitfield_1_: c_uint,
-    pub _bindgen_bitfield_2_: c_int,
-    pub aborted: c_uint,
-    pub keepalive: ap_conn_keepalive_e,
-    pub keepalives: c_int,
-    pub log: *const ap_logconf,
-    pub log_id: *const c_char,
-    pub current_thread: *mut apr_thread_t,
+#[test]
+fn bindgen_test_layout_ap_filter_rec_t() {
+    assert_eq!(::std::mem::size_of::<ap_filter_rec_t>(), 56usize, concat!( "Size of: " , stringify ! ( ap_filter_rec_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_rec_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_rec_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).name as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( name ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).filter_func as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( filter_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).filter_init_func as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( filter_init_func ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).next as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).providers as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( providers ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).ftype as *const _ as usize }, 40usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( ftype ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).debug as *const _ as usize }, 44usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( debug ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_rec_t>())).proto_flags as *const _ as usize }, 48usize, concat!( "Offset of field: " , stringify ! ( ap_filter_rec_t ) , "::" , stringify ! ( proto_flags ) ));
 }
 
+/// @brief The representation of a filter chain.
+///
+/// Each request has a list
+/// of these structures which are called in turn to filter the data.  Sub
+/// requests get an exact copy of the main requests filter chain.
 #[repr(C)]
-#[derive(Copy, Clone)]
-pub struct server_rec {
-    pub process: *mut process_rec,
-    pub next: *mut server_rec,
-    pub error_fname: *mut c_char,
-    pub error_log: *mut apr_file_t,
-    pub log: ap_logconf,
-    pub module_config: *mut ap_conf_vector_t,
-    pub lookup_defaults: *mut ap_conf_vector_t,
-    pub defn_name: *const c_char,
-    pub defn_line_number: c_uint,
-    pub is_virtual: c_char,
-    pub port: apr_port_t,
-    pub server_scheme: *const c_char,
-    pub server_admin: *mut c_char,
-    pub server_hostname: *mut c_char,
-    pub addrs: *mut server_addr_rec,
-    pub timeout: apr_interval_time_t,
-    pub keep_alive_timeout: apr_interval_time_t,
-    pub keep_alive_max: c_int,
-    pub keep_alive: c_int,
-    pub names: *mut apr_array_header_t,
-    pub wild_names: *mut apr_array_header_t,
-    pub path: *const c_char,
-    pub pathlen: c_int,
-    pub limit_req_line: c_int,
-    pub limit_req_fieldsize: c_int,
-    pub limit_req_fields: c_int,
-    pub context: *mut c_void,
+#[derive(Debug, Copy, Clone)]
+pub struct ap_filter_t {
+    /// The internal representation of this filter.  This includes
+    /// the filter's name, type, and the actual function pointer.
+    pub frec: *mut ffi::ap_filter_rec_t,
+    /// A place to store any data associated with the current filter
+    pub ctx: *mut ::libc::c_void,
+    /// The next filter in the chain
+    pub next: *mut ::ffi::ap_filter_t,
+    /// The request_rec associated with the current filter.  If a sub-request
+    /// adds filters, then the sub-request is the request associated with the
+    /// filter.
+    pub r: *mut ffi::request_rec,
+    /// The conn_rec associated with the current filter.  This is analogous
+    /// to the request_rec, except that it is used for connection filters.
+    pub c: *mut ffi::conn_rec,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct server_addr_rec {
-    pub next: *mut server_addr_rec,
-    pub virthost: *mut c_char,
-    pub host_addr: *mut apr_sockaddr_t,
-    pub host_port: apr_port_t,
+#[test]
+fn bindgen_test_layout_ap_filter_t() {
+    assert_eq!(::std::mem::size_of::<ap_filter_t>(), 40usize, concat!( "Size of: " , stringify ! ( ap_filter_t ) ));
+    assert_eq!(::std::mem::align_of::<ap_filter_t>(), 8usize, concat!( "Alignment of " , stringify ! ( ap_filter_t ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).frec as *const _ as usize }, 0usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( frec ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).ctx as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( ctx ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).next as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( next ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).r as *const _ as usize }, 24usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( r ) ));
+    assert_eq!(unsafe { &(*(::std::ptr::null::<ap_filter_t>())).c as *const _ as usize }, 32usize, concat!( "Offset of field: " , stringify ! ( ap_filter_t ) , "::" , stringify ! ( c ) ));
 }
-*/
