@@ -10,9 +10,7 @@ use ffi;
 
 use wrapper::{Wrapper, from_char_ptr, FromRaw};
 
-use apr::{Table, Pool, ArrayHeaderIter};
-use cookie::Cookie;
-
+use apr::{Table, Pool};
 
 
 macro_rules! field {
