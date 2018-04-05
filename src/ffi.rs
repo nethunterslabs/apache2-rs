@@ -1,4 +1,7 @@
 #![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
+#![allow(non_snake_case)]
+
 
 use std::mem;
 
@@ -141,11 +144,6 @@ pub use ffi24::apr_thread_mutex_t;
 pub use ffi22::apr_thread_t;
 #[cfg(not(feature = "apache22"))]
 pub use ffi24::apr_thread_t;
-
-#[cfg(feature = "apache22")]
-pub use ffi22::apr_file_t;
-#[cfg(not(feature = "apache22"))]
-pub use ffi24::apr_file_t;
 
 
 extern "C" {
@@ -470,6 +468,28 @@ pub struct htaccess_result {
    pub htaccess: *mut ap_conf_vector_t,
    pub next: *const htaccess_result,
 }
+
+#[repr(C)]
+pub struct apr_file_t {
+   pub pool: *mut apr_pool_t,
+   pub filedes: c_int,
+   pub fname: *mut c_char,
+   pub flags: apr_int32_t,
+   pub eof_hit: c_int,
+   pub is_pipe: c_int,
+   pub timeout: apr_interval_time_t,
+   pub buffered: c_int,
+   pub blocking: u32,
+   pub ungetchar: c_int,
+   pub buffer: *mut c_char,
+   pub bufpos: apr_size_t,
+   pub bufsize: apr_size_t,
+   pub dataRead: c_ulong,
+   pub direction: c_int,
+   pub filePtr: apr_off_t,
+   pub thlock: *mut apr_thread_mutex_t,
+}
+
 
 #[cfg(feature = "apache22")]
 pub use ffi22::process_rec;

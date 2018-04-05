@@ -849,7 +849,7 @@ pub struct apr_finfo_t {
     /// The file's name (no path) in filesystem case
     pub name: *const ::libc::c_char,
     /// The file's handle, if accessed (can be submitted to apr_duphandle)
-    pub filehand: *mut apr_file_t,
+    pub filehand: *mut ffi::apr_file_t,
 }
 
 #[test]
@@ -1355,7 +1355,7 @@ pub struct apr_bucket_file {
     /// Number of buckets using this memory
     pub refcount: apr_bucket_refcount,
     /// The file this bucket refers to
-    pub fd: *mut apr_file_t,
+    pub fd: *mut ffi::apr_file_t,
     /// The pool into which any needed structures should
     /// be created while reading from this file bucket
     pub readpool: *mut apr_pool_t,
@@ -1488,7 +1488,7 @@ pub type apr_datatype_e = u32;
 #[derive(Copy, Clone)]
 pub union apr_descriptor {
     /// < file
-    pub f: *mut apr_file_t,
+    pub f: *mut ffi::apr_file_t,
     /// < socket
     pub s: *mut apr_socket_t,
     _bindgen_union_align: u64,
@@ -1587,11 +1587,11 @@ pub struct apr_proc_t {
     /// The process ID
     pub pid: ::libc::pid_t,
     /// Parent's side of pipe to child's stdin
-    pub in_: *mut apr_file_t,
+    pub in_: *mut ffi::apr_file_t,
     /// Parent's side of pipe to child's stdout
-    pub out: *mut apr_file_t,
+    pub out: *mut ffi::apr_file_t,
     /// Parent's side of pipe to child's stdouterr
-    pub err: *mut apr_file_t,
+    pub err: *mut ffi::apr_file_t,
 }
 
 #[test]
@@ -2396,7 +2396,7 @@ pub struct server_rec {
     /// The name of the error log
     pub error_fname: *mut ::libc::c_char,
     /// A file descriptor that references the error log
-    pub error_log: *mut apr_file_t,
+    pub error_log: *mut ffi::apr_file_t,
     /// The log level configuration
     pub log: ap_logconf,
     /// Config vector containing pointers to modules' per-server config
@@ -3112,11 +3112,6 @@ fn bindgen_test_layout___va_list_tag() {
     assert_eq!(unsafe { &(*(::std::ptr::null::<__va_list_tag>())).overflow_arg_area as *const _ as usize }, 8usize, concat!( "Offset of field: " , stringify ! ( __va_list_tag ) , "::" , stringify ! ( overflow_arg_area ) ));
     assert_eq!(unsafe { &(*(::std::ptr::null::<__va_list_tag>())).reg_save_area as *const _ as usize }, 16usize, concat!( "Offset of field: " , stringify ! ( __va_list_tag ) , "::" , stringify ! ( reg_save_area ) ));
 }
-
-/// The file's handle, if accessed (can be submitted to apr_duphandle)
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct apr_file_t { pub _address: u8 }
 
 /// the configuration directives
 #[repr(C)]
