@@ -605,6 +605,7 @@ pub type hook_check_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut a
 pub type hook_test_config_fn = extern "C" fn(conf: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_post_config_fn = extern "C" fn(conf: *mut apr_pool_t, log: *mut apr_pool_t, temp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_child_init_fn = extern "C" fn(p: *mut apr_pool_t, s: *mut server_rec);
+pub type hook_open_logs_fn = extern "C" fn(pconf: *mut apr_pool_t, plog: *mut apr_pool_t, ptemp: *mut apr_pool_t, s: *mut server_rec) -> c_int;
 pub type hook_insert_output_filter_fn = extern "C" fn(r: *mut request_rec);
 
 pub type ap_table_do_callback_fb = extern "C" fn(r: *mut request_rec, key: *const c_char, value: *const c_char) -> c_int;
@@ -674,8 +675,10 @@ extern "C" {
    pub fn ap_hook_access_checker(     f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_access_checker_ex(  f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_auth_checker(       f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
-   pub fn ap_hook_log_transaction(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_log_transaction(    f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_child_init(         f: Option<hook_child_init_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+   pub fn ap_hook_open_logs(          f: Option<hook_open_logs_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
+
 
 
    //todo:  this might have gotten messed up from the bindgen conversion of function args.  Look at the old param types
