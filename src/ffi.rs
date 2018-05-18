@@ -194,9 +194,9 @@ pub const MODULE_MAGIC_NUMBER_MAJOR: c_int = ::ffi24::MODULE_MAGIC_NUMBER_MAJOR;
 pub const MODULE_MAGIC_NUMBER_MINOR: c_int = ::ffi24::MODULE_MAGIC_NUMBER_MINOR;
 
 #[cfg(feature = "apache22")]
-pub const APR_BUCKET_BUFF_SIZE: c_int = ::ffi22::APR_BUCKET_BUFF_SIZE;
+pub const APR_BUCKET_BUFF_SIZE: u32 = ::ffi22::APR_BUCKET_BUFF_SIZE;
 #[cfg(not(feature = "apache22"))]
-pub const APR_BUCKET_BUFF_SIZE: c_int = ::ffi24::APR_BUCKET_BUFF_SIZE;
+pub const APR_BUCKET_BUFF_SIZE: u32 = ::ffi24::APR_BUCKET_BUFF_SIZE;
 
 pub const OK:        c_int = 0;
 pub const DECLINED:  c_int = -1;
