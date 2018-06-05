@@ -203,6 +203,12 @@ pub const DECLINED:  c_int = -1;
 pub const DONE:      c_int = -2;
 pub const SUSPENDED: c_int = -3;
 
+#[cfg(feature = "apache22")]
+pub const APR_SUCCESS: c_int = ::ffi22::APR_SUCCESS;
+#[cfg(not(feature = "apache22"))]
+pub const APR_SUCCESS: c_int = ::ffi24::APR_SUCCESS;
+
+
 pub const HTTP_CONTINUE:                        c_int = 100;
 pub const HTTP_SWITCHING_PROTOCOLS:             c_int = 101;
 pub const HTTP_PROCESSING:                      c_int = 102;
@@ -665,6 +671,7 @@ extern "C" {
 //   pub fn ap_list_provider_names(pool: *mut apr_pool_t, provider_group: *const c_char, provider_version: *const c_char) -> *mut apr_array_header_t;
 //   pub fn ap_list_provider_groups(pool: *mut apr_pool_t) -> *mut apr_array_header_t;
 
+   pub fn ap_hook_post_read_request(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_handler(f: Option<hook_handler_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_pre_config(f: Option<hook_pre_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 //   pub fn ap_hook_check_config(f: Option<hook_check_config_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
@@ -687,10 +694,13 @@ extern "C" {
 
    //todo:  this might have gotten messed up from the bindgen conversion of function args.  Look at the old param types
    pub fn ap_register_output_filter(name: *const c_char, filter_fn: ap_out_filter_func, init_fn: ap_init_filter_func, filter_type: ap_filter_type) -> *const ap_filter_rec_t;
+   pub fn ap_register_input_filter(name: *const c_char, filter_fn: ap_in_filter_func, init_fn: ap_init_filter_func, filter_type: ap_filter_type) -> *const ap_filter_rec_t;
+
    pub fn ap_hook_insert_filter      (f: Option<hook_insert_output_filter_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
    pub fn ap_hook_insert_error_filter(f: Option<hook_insert_output_filter_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 
    pub fn ap_add_output_filter(name: *const c_char, ctx: *const c_void, r: *mut request_rec, c: *mut conn_rec) -> *mut ap_filter_t;
+   pub fn ap_add_input_filter(name: *const c_char, ctx: *const c_void, r: *mut request_rec, c: *mut conn_rec) -> *mut ap_filter_t;
    pub fn ap_pass_brigade(next: *mut ap_filter_t, bb: *mut apr_bucket_brigade) -> apr_status_t;
 //(ap_filter_t *) ap_add_output_filter(const char *name, void *ctx,
 //request_rec *r, conn_rec *c)

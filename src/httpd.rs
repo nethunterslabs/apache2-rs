@@ -412,6 +412,8 @@ impl Request {
 
    option_getter!(request_config, ConfVector);
 
+   type_getter!(remaining, i64);
+
    #[cfg(not(feature = "apache22"))]
    str_getter!(log_id);
 
