@@ -700,6 +700,7 @@ extern "C" {
    pub fn ap_hook_insert_error_filter(f: Option<hook_insert_output_filter_fn>, pre: *const *const c_char, succ: *const *const c_char, order: c_int);
 
    pub fn ap_add_output_filter(name: *const c_char, ctx: *const c_void, r: *mut request_rec, c: *mut conn_rec) -> *mut ap_filter_t;
+   pub fn ap_remove_output_filter(f: *mut ap_filter_t);
    pub fn ap_add_input_filter(name: *const c_char, ctx: *const c_void, r: *mut request_rec, c: *mut conn_rec) -> *mut ap_filter_t;
    pub fn ap_pass_brigade(next: *mut ap_filter_t, bb: *mut apr_bucket_brigade) -> apr_status_t;
 //(ap_filter_t *) ap_add_output_filter(const char *name, void *ctx,
