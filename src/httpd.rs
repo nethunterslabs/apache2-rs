@@ -33,10 +33,28 @@ macro_rules! option_getter {
    }
 }
 
+macro_rules! non_option_getter {
+   ($name:ident, $restype:ident) => {
+      pub fn $name<'a>(&'a self) -> &'a$restype {
+         unsafe{
+            &(*self.ptr).$name
+         }
+      }
+   }
+}
+
 macro_rules! type_getter {
    ($name:ident, $restype:ident) => {
       pub fn $name(&self) -> $restype {
          field!(self, $name) as $restype
+      }
+   }
+}
+
+macro_rules! type_getter_non_ptr {
+   ($name:ident, $restype:ident) => {
+      pub fn $name(&self) -> $restype {
+         self.$name as $restype
       }
    }
 }
@@ -53,6 +71,14 @@ macro_rules! str_getter {
    ($name:ident) => {
       pub fn $name<'a>(&self) -> Option<&'a str> {
          from_char_ptr(field!(self, $name))
+      }
+   }
+}
+
+macro_rules! str_getter_non_ptr {
+   ($name:ident) => {
+      pub fn $name<'a>(&self) -> Option<&'a str> {
+         from_char_ptr(self.$name)
       }
    }
 }
@@ -321,6 +347,8 @@ impl Request {
    option_getter!(connection, Conn);
 
    option_getter!(server, Server);
+
+   non_option_getter!(parsed_uri, ParsedURI);
 
    str_getter!(the_request);
 
@@ -683,6 +711,32 @@ impl Conn {
    str_getter!(log_id);
 }
 
+//parsed_uri is not a pointer on `request_rec`
+pub type ParsedURI = ffi::apr_uri_t;
+
+impl ParsedURI {
+    str_getter_non_ptr!(scheme);
+    /// combined [user[:password]\@]host[:port]
+    str_getter_non_ptr!(hostinfo);
+    /// user name, as in http://user:passwd\@host:port/
+    str_getter_non_ptr!(user);
+    /// password, as in http://user:passwd\@host:port/
+    str_getter_non_ptr!(password);
+    /// hostname from URI (or from Host: header)
+    str_getter_non_ptr!(hostname);
+    /// port string (integer representation is in "port")
+    str_getter_non_ptr!(port_str);
+    /// the request path (or NULL if only scheme://host was given)
+    str_getter_non_ptr!(path);
+    /// Everything after a '?' in the path, if present
+    str_getter_non_ptr!(query);
+    /// Trailing "#fragment" string, if present
+    str_getter_non_ptr!(fragment);
+    /// structure returned from gethostbyname()
+    // skipped:  hostent,
+    /// The port number, numeric, valid only if port_str != NULL
+    type_getter_non_ptr!(port, u16);
+}
 
 pub type Server = Wrapper<ffi::server_rec>;
 
