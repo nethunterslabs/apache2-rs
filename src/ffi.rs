@@ -147,27 +147,28 @@ pub use ffi24::apr_thread_t;
 
 
 extern "C" {
-   pub fn apr_version_string() -> *const c_char;
-   pub fn apu_version_string() -> *const c_char;
+    pub fn apr_version_string() -> *const c_char;
+    pub fn apu_version_string() -> *const c_char;
 
-   pub fn apr_table_get(t: *const apr_table_t, key: *const c_char) -> *const c_char;
-   pub fn apr_table_set(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
-   pub fn apr_table_add(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
-   pub fn apr_table_do(f: *mut ap_table_do_callback_fb, r: *mut c_void, table: * const apr_table_t, ...) -> c_int;
+    pub fn apr_table_get(t: *const apr_table_t, key: *const c_char) -> *const c_char;
+    pub fn apr_table_set(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
+    pub fn apr_table_add(t: *mut apr_table_t, key: *const c_char, val: *const c_char) -> ();
+    pub fn apr_table_do(f: *mut ap_table_do_callback_fb, r: *mut c_void, table: *const apr_table_t, ...) -> c_int;
 
-   pub fn apr_table_elts(t: *const apr_table_t) -> *const apr_array_header_t;
+    pub fn apr_table_elts(t: *const apr_table_t) -> *const apr_array_header_t;
 
-   pub fn apr_pstrmemdup(p: *mut apr_pool_t, s: *const c_char, n: apr_size_t) -> *mut c_char;
-   pub fn apr_palloc(p: *mut apr_pool_t, size: apr_size_t) -> *mut c_void;
-   pub fn apr_pcalloc(p: *mut apr_pool_t, size: apr_size_t) -> *mut c_void;
+    pub fn apr_pstrmemdup(p: *mut apr_pool_t, s: *const c_char, n: apr_size_t) -> *mut c_char;
+    pub fn apr_palloc(p: *mut apr_pool_t, size: apr_size_t) -> *mut c_void;
+    pub fn apr_pcalloc(p: *mut apr_pool_t, size: apr_size_t) -> *mut c_void;
 
-   pub fn apr_base64_encode_len(len: c_int) -> c_int;
-   pub fn apr_base64_encode(coded_dst: *mut c_char, plain_src: *const c_char, len_plain_src: c_int) -> c_int;
-   pub fn apr_base64_decode_len(coded_src: *const c_char) -> c_int;
-   pub fn apr_base64_decode(plain_dst: *mut c_char, coded_src: *const c_char) -> c_int;
+    pub fn apr_base64_encode_len(len: c_int) -> c_int;
+    pub fn apr_base64_encode(coded_dst: *mut c_char, plain_src: *const c_char, len_plain_src: c_int) -> c_int;
+    pub fn apr_base64_decode_len(coded_src: *const c_char) -> c_int;
+    pub fn apr_base64_decode(plain_dst: *mut c_char, coded_src: *const c_char) -> c_int;
 
-   pub fn apr_time_now() -> apr_time_t;
-   pub fn apr_rfc822_date(date_str: *mut c_char, t: apr_time_t) -> apr_status_t;
+    pub fn apr_time_now() -> apr_time_t;
+    pub fn apr_rfc822_date(date_str: *mut c_char, t: apr_time_t) -> apr_status_t;
+    pub fn ap_die(status_type: c_int, r: *const request_rec);
 }
 
 pub fn strdup<T: Into<Vec<u8>>>(pool: *mut apr_pool_t, data: T) -> *mut c_char {
@@ -207,6 +208,11 @@ pub const SUSPENDED: c_int = -3;
 pub const APR_SUCCESS: c_int = ::ffi22::APR_SUCCESS;
 #[cfg(not(feature = "apache22"))]
 pub const APR_SUCCESS: c_int = ::ffi24::APR_SUCCESS;
+
+#[cfg(feature = "apache22")]
+pub const AP_FILTER_ERROR: c_int = ::ffi22::AP_FILTER_ERROR;
+#[cfg(not(feature = "apache22"))]
+pub const AP_FILTER_ERROR: c_int = ::ffi24::AP_FILTER_ERROR;
 
 
 pub const HTTP_CONTINUE:                        c_int = 100;

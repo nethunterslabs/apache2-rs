@@ -442,6 +442,7 @@ pub const AP_REQ_REJECT_PATH_INFO: u32 = 1;
 pub const AP_SERVER_PROTOCOL: &'static [u8; 9usize] = b"HTTP/1.1\0";
 pub const AP_TYPES_CONFIG_FILE: &'static [u8; 16usize] = b"conf/mime.types\0";
 pub const AP_USING_AUTOCONF: u32 = 1;
+pub const AP_FILTER_ERROR: i32 = -3;
 pub const CR: u32 = 13;
 pub const CRLF: &'static [u8; 3usize] = b"\r\n\0";
 pub const CRLF_ASCII: &'static [u8; 3usize] = b"\r\n\0";
