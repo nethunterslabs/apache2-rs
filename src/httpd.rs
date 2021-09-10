@@ -135,6 +135,7 @@ pub enum Status {
    HTTP_LOOP_DETECTED,
    HTTP_NOT_EXTENDED,
    HTTP_NETWORK_AUTHENTICATION_REQUIRED,
+   HTTP_UNKNOWN(c_int),
 }
 
 impl Into<c_int> for Status {
@@ -203,6 +204,7 @@ impl Into<c_int> for Status {
          Status::HTTP_LOOP_DETECTED => ffi::HTTP_LOOP_DETECTED,
          Status::HTTP_NOT_EXTENDED => ffi::HTTP_NOT_EXTENDED,
          Status::HTTP_NETWORK_AUTHENTICATION_REQUIRED => ffi::HTTP_NETWORK_AUTHENTICATION_REQUIRED,
+         Status::HTTP_UNKNOWN(i) => i,
       }
    }
 }
@@ -275,7 +277,7 @@ impl Into<Status> for c_int {
          ffi::HTTP_LOOP_DETECTED => Status::HTTP_LOOP_DETECTED,
          ffi::HTTP_NOT_EXTENDED => Status::HTTP_NOT_EXTENDED,
          ffi::HTTP_NETWORK_AUTHENTICATION_REQUIRED => Status::HTTP_NETWORK_AUTHENTICATION_REQUIRED,
-
+         i if i >= 100 => Status::HTTP_UNKNOWN(i),
          _ => Status::DECLINED
       }
    }
