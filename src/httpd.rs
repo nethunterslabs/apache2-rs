@@ -18,6 +18,12 @@ macro_rules! field {
     };
 }
 
+macro_rules! nested_field {
+    ($that:ident, $field1:ident, $field2:ident) => {
+        unsafe { (*(*$that.ptr).$field1).$field2 }
+    };
+}
+
 macro_rules! set_field {
     ($that:ident, $field:ident, $value:expr) => {
         unsafe { (*$that.ptr).$field = $value }
@@ -36,6 +42,14 @@ macro_rules! type_getter {
     ($name:ident, $restype:ident) => {
         pub fn $name(&self) -> $restype {
             field!(self, $name) as $restype
+        }
+    };
+}
+
+macro_rules! type_field_getter {
+    ($name:ident, $field1:ident, $field2:ident, $restype:ident) => {
+        pub fn $name(&self) -> $restype {
+            nested_field!(self, $field1, $field2) as $restype
         }
     };
 }
@@ -622,6 +636,8 @@ pub type Conn = Wrapper<ffi::conn_rec>;
 impl Conn {
     str_getter!(client_ip);
 
+    type_field_getter!(client_port, client_addr, port, u16);
+
     str_getter!(remote_host);
 
     str_getter!(remote_logname);
@@ -629,6 +645,8 @@ impl Conn {
     str_getter!(local_ip);
 
     str_getter!(local_host);
+
+    type_field_getter!(local_port, local_addr, port, u16);
 
     str_getter!(log_id);
 }
