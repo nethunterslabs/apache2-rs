@@ -3,28 +3,31 @@
 
 extern crate libc;
 
-pub mod ffi;
 pub mod apr;
+pub mod cookie;
+pub mod ffi;
 pub mod httpd;
 pub mod wrapper;
-pub mod cookie;
 
-pub use libc::{c_void, c_char, c_int};
+pub use libc::{c_char, c_int, c_void};
 
-pub use httpd::{Request, Status, ProxyReq, CmdParms, Server, server_banner, server_description,
-                server_built, show_mpm, ConfVector};
+pub use httpd::{
+    server_banner, server_built, server_description, show_mpm, CmdParms, ConfVector, ProxyReq,
+    Request, Server, Status,
+};
 
-pub use apr::{apr_version_string, apu_version_string, HookOrder, Pool, time_now};
+pub use apr::{apr_version_string, apu_version_string, time_now, HookOrder, Pool};
 
 pub use cookie::Cookie;
 
-pub use wrapper::{WrappedType, from_char_ptr, FromRaw};
+pub use wrapper::{from_char_ptr, FromRaw, WrappedType};
 
-pub use ffi::{OR_NONE, OR_LIMIT, OR_OPTIONS, OR_FILEINFO, OR_AUTHCFG, OR_INDEXES, OR_UNSET,
-              ACCESS_CONF, RSRC_CONF, EXEC_ON_READ, NONFATAL_OVERRIDE, NONFATAL_UNKNOWN, NONFATAL_ALL, OR_ALL,
-              RAW_ARGS, TAKE1, TAKE2, ITERATE, ITERATE2, FLAG, NO_ARGS, TAKE12, TAKE3, TAKE23, TAKE123,
-              TAKE13, TAKE_ARGV};
-
+pub use ffi::{
+    ACCESS_CONF, EXEC_ON_READ, FLAG, ITERATE, ITERATE2, NONFATAL_ALL, NONFATAL_OVERRIDE,
+    NONFATAL_UNKNOWN, NO_ARGS, OR_ALL, OR_AUTHCFG, OR_FILEINFO, OR_INDEXES, OR_LIMIT, OR_NONE,
+    OR_OPTIONS, OR_UNSET, RAW_ARGS, RSRC_CONF, TAKE1, TAKE12, TAKE123, TAKE13, TAKE2, TAKE23,
+    TAKE3, TAKE_ARGV,
+};
 
 pub type StringType<'a> = &'a str;
 pub type CStringType = *const c_char;
@@ -32,15 +35,14 @@ pub type CStringType = *const c_char;
 pub type BoolType = bool;
 pub type CBoolType = c_int;
 
-
 #[macro_export]
 macro_rules! get {
-   ($expr:expr) => (match $expr {
-      Some(val) => val,
-      None => {
-         return std::result::Result::Err(std::convert::From::from(()))
-      }
-   })
+    ($expr:expr) => {
+        match $expr {
+            Some(val) => val,
+            None => return std::result::Result::Err(std::convert::From::from(())),
+        }
+    };
 }
 
 /*
