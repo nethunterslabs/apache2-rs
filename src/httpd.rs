@@ -306,9 +306,9 @@ pub enum ProxyReq {
     RESPONSE, // Origin response
 }
 
-impl Into<ProxyReq> for c_int {
-    fn into(self) -> ProxyReq {
-        match self {
+impl From<c_int> for ProxyReq {
+    fn from(c_int: c_int) -> ProxyReq {
+        match c_int {
             ffi::PROXYREQ_NONE => ProxyReq::NONE,
             ffi::PROXYREQ_PROXY => ProxyReq::PROXY,
             ffi::PROXYREQ_REVERSE => ProxyReq::REVERSE,
@@ -328,6 +328,23 @@ impl fmt::Display for ProxyReq {
         };
 
         write!(f, "{}", display)
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ReadPolicy {
+    REQUEST_NO_BODY,
+    REQUEST_CHUNKED_ERROR,
+    REQUEST_CHUNKED_DECHUNK,
+}
+
+impl From<ReadPolicy> for c_int {
+    fn from(read_policy: ReadPolicy) -> c_int {
+        match read_policy {
+            ReadPolicy::REQUEST_NO_BODY => ffi::READ_POLICY_REQUEST_NO_BODY,
+            ReadPolicy::REQUEST_CHUNKED_ERROR => ffi::READ_POLICY_REQUEST_CHUNKED_ERROR,
+            ReadPolicy::REQUEST_CHUNKED_DECHUNK => ffi::READ_POLICY_REQUEST_CHUNKED_DECHUNK,
+        }
     }
 }
 
@@ -380,6 +397,8 @@ impl Request {
     str_getter!(range);
 
     type_getter!(clength, i64);
+
+    option_getter!(body_table, Table);
 
     option_getter!(headers_in, Table);
 
@@ -449,6 +468,29 @@ impl Request {
             -1 => Err(()),
             _ => Ok(()),
         }
+    }
+
+    pub fn setup_client_block(&self, read_policy: ReadPolicy) -> Result<i32, i32> {
+        let setup = unsafe { ffi::ap_setup_client_block(self.ptr, read_policy.into()) };
+
+        match setup {
+            0 => Ok(setup),
+            _ => Err(setup),
+        }
+    }
+
+    pub fn should_client_block(&self) -> Result<i32, i32> {
+        let result = unsafe { ffi::ap_should_client_block(self.ptr) };
+
+        match result {
+            1 => Ok(result),
+            _ => Err(result),
+        }
+    }
+
+    pub fn get_client_block(&self, buffer_ptr: *mut i8, bufsize: u64) -> Result<i64, ()> {
+        let result = unsafe { ffi::ap_get_client_block(self.ptr, buffer_ptr, bufsize) };
+        Ok(result)
     }
 
     pub fn escape_html<'a, T: Into<Vec<u8>>>(&self, s: T) -> Result<&'a str, ()> {

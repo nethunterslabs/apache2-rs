@@ -20,6 +20,8 @@ pub const APR_HOOK_LAST: c_int = 20;
 // run this hook last, after EVERYTHING
 pub const APR_HOOK_REALLY_LAST: c_int = 30;
 
+pub const HUGE_STRING_LEN: apr_size_t = 8192;
+
 pub type sockaddr_in = c_void;
 pub type sockaddr_in6 = c_void;
 pub type sockaddr_storage = c_void;
@@ -342,6 +344,10 @@ pub const PROXYREQ_NONE: c_int = 0;
 pub const PROXYREQ_PROXY: c_int = 1;
 pub const PROXYREQ_REVERSE: c_int = 2;
 pub const PROXYREQ_RESPONSE: c_int = 3;
+
+pub const READ_POLICY_REQUEST_NO_BODY: c_int = 0;
+pub const READ_POLICY_REQUEST_CHUNKED_ERROR: c_int = 1;
+pub const READ_POLICY_REQUEST_CHUNKED_DECHUNK: c_int = 2;
 
 pub const RAW_ARGS: c_uint = 0;
 pub const TAKE1: c_uint = 1;
@@ -893,6 +899,14 @@ extern "C" {
     pub fn ap_rwrite(buf: *const c_void, nbyte: c_int, r: *const request_rec) -> c_int;
     pub fn ap_set_content_type(r: *const request_rec, ct: *const c_char);
     pub fn ap_get_basic_auth_pw(r: *const request_rec, pw: *mut *const c_char) -> c_int;
+
+    pub fn ap_setup_client_block(r: *const request_rec, read_policy: c_int) -> c_int;
+    pub fn ap_should_client_block(r: *const request_rec) -> c_int;
+    pub fn ap_get_client_block(
+        r: *const request_rec,
+        buffer: *mut c_char,
+        bufsiz: apr_size_t,
+    ) -> c_long;
 
     //pub fn ap_context_document_root(r: *const request_rec) -> *const c_char;
     //pub fn ap_context_prefix(r: *const request_rec) -> *const c_char;

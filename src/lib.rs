@@ -13,14 +13,14 @@ pub use libc::{c_char, c_int, c_void};
 
 pub use httpd::{
     server_banner, server_built, server_description, show_mpm, CmdParms, ConfVector, ProxyReq,
-    Request, Server, Status,
+    ReadPolicy, Request, Server, Status,
 };
 
 pub use apr::{apr_version_string, apu_version_string, time_now, HookOrder, Pool};
 
 pub use cookie::Cookie;
 
-pub use wrapper::{from_char_ptr, FromRaw, WrappedType};
+pub use wrapper::{from_char_ptr, CStrBuf, FromRaw, WrappedType};
 
 pub use ffi::{
     ACCESS_CONF, EXEC_ON_READ, FLAG, ITERATE, ITERATE2, NONFATAL_ALL, NONFATAL_OVERRIDE,

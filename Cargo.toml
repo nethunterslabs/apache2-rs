@@ -5,4 +5,5 @@ version = "0.0.2"
 
 [dependencies]
 libc = "0.2.118"
+memchr = "2.4.1"
 #interpolate_idents = "0.2.1"
