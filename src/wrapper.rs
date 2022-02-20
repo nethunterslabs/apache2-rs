@@ -73,7 +73,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 pub struct CStrBuf {
-    vec: Vec<u8>,
+    pub vec: Vec<u8>,
 }
 
 impl CStrBuf {
@@ -140,5 +140,17 @@ impl CStrBuf {
     pub fn to_str(&self) -> Result<&str, std::str::Utf8Error> {
         let len = self.strlen();
         std::str::from_utf8(&self.vec[0..len])
+    }
+
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        let len = self.strlen();
+        &self.vec[0..len]
+    }
+
+    #[inline]
+    pub fn as_bytes_owned(&self) -> Vec<u8> {
+        let len = self.strlen();
+        self.vec[0..len].to_vec()
     }
 }
