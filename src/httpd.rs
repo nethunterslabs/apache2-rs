@@ -488,7 +488,7 @@ impl Request {
         }
     }
 
-    pub fn get_client_block(&self, buffer_ptr: *mut c_char, bufsize: u64) -> Result<i64, ()> {
+    pub fn get_client_block(&self, buffer_ptr: *mut i8, bufsize: u64) -> Result<i64, ()> {
         let result = unsafe { ffi::ap_get_client_block(self.ptr, buffer_ptr, bufsize) };
         Ok(result)
     }

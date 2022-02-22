@@ -42,7 +42,6 @@ pub type apr_ino_t = c_ulong;
 pub type apr_uintptr_t = apr_uint64_t;
 pub type apr_status_t = c_int;
 pub type apr_signum_t = c_int;
-pub type apr_read_type_e = c_uint;
 pub type apr_bucket_is_metadata_t = c_uint;
 pub type apr_filetype_e = c_uint;
 pub type apr_uid_t = c_uint;
@@ -69,6 +68,13 @@ pub struct apr_table_entry_t {
     pub key: *mut c_char,
     pub val: *mut c_char,
     pub key_checksum: apr_uint32_t,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub enum apr_read_type_e {
+    APR_BLOCK_READ,
+    APR_NONBLOCK_READ,
 }
 
 #[repr(C)]

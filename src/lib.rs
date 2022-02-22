@@ -16,7 +16,7 @@ pub use httpd::{
     ReadPolicy, Request, Server, Status,
 };
 
-pub use apr::{apr_version_string, apu_version_string, time_now, HookOrder, Pool};
+pub use apr::{apr_version_string, apu_version_string, time_now, AprBucket, HookOrder, Pool};
 
 pub use cookie::Cookie;
 

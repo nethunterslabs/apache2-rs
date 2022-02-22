@@ -164,3 +164,25 @@ pub fn apu_version_string<'a>() -> Option<&'a str> {
 pub fn time_now() -> i64 {
     unsafe { ffi::apr_time_now() }
 }
+
+pub type AprBucket = Wrapper<ffi::apr_bucket>;
+
+impl AprBucket {
+    pub fn read(
+        &self,
+        str: *mut *const i8,
+        len: *mut u64,
+        block: ffi::apr_read_type_e,
+    ) -> Result<i32, ()> {
+        unsafe {
+            let bucket = *self.ptr;
+            if let Some(bucket_type) = bucket._type.as_ref() {
+                if let Some(read) = bucket_type.read {
+                    let result = read(self.ptr, str, len, block);
+                    return Ok(result);
+                }
+            }
+            Err(())
+        }
+    }
+}
