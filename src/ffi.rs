@@ -116,7 +116,7 @@ pub struct apr_bucket_type_t {
     pub read: Option<
         extern "C" fn(
             b: *mut apr_bucket,
-            str: *mut *const c_char,
+            str: *mut *const i8,
             len: *mut apr_size_t,
             block: apr_read_type_e,
         ) -> apr_status_t,
