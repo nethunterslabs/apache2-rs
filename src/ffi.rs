@@ -910,7 +910,7 @@ extern "C" {
     pub fn ap_should_client_block(r: *const request_rec) -> c_int;
     pub fn ap_get_client_block(
         r: *const request_rec,
-        buffer: *mut c_char,
+        buffer: *mut i8,
         bufsiz: apr_size_t,
     ) -> c_long;
 
