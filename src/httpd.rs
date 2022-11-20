@@ -1,16 +1,16 @@
 #![allow(non_camel_case_types)]
 #![allow(unused_unsafe)]
 
-use libc::{c_char, c_int, c_void};
+use std::ffi::{c_char, c_int, c_void};
 
 use std::ffi::CString;
 use std::{fmt, ptr};
 
-use ffi;
-
-use wrapper::{from_char_ptr, FromRaw, Wrapper};
-
-use apr::{Pool, Table};
+use crate::{
+    apr::{Pool, Table},
+    ffi,
+    wrapper::{from_char_ptr, FromRaw, Wrapper},
+};
 
 macro_rules! field {
     ($that:ident, $field:ident) => {
@@ -126,7 +126,6 @@ pub enum Status {
     HTTP_UNSUPPORTED_MEDIA_TYPE,
     HTTP_RANGE_NOT_SATISFIABLE,
     HTTP_EXPECTATION_FAILED,
-    HTTP_IM_A_TEAPOT,
     HTTP_UNPROCESSABLE_ENTITY,
     HTTP_LOCKED,
     HTTP_FAILED_DEPENDENCY,
@@ -148,75 +147,76 @@ pub enum Status {
     HTTP_UNKNOWN(c_int),
 }
 
-impl Into<c_int> for Status {
-    fn into(self) -> c_int {
-        match self {
-            Status::OK => ffi::OK,
+impl From<Status> for c_int {
+    fn from(status: Status) -> c_int {
+        match status {
+            Status::OK => ffi::OK as c_int,
             Status::DECLINED => ffi::DECLINED,
             Status::DONE => ffi::DONE,
             Status::SUSPENDED => ffi::SUSPENDED,
 
-            Status::HTTP_CONTINUE => ffi::HTTP_CONTINUE,
-            Status::HTTP_SWITCHING_PROTOCOLS => ffi::HTTP_SWITCHING_PROTOCOLS,
-            Status::HTTP_PROCESSING => ffi::HTTP_PROCESSING,
-            Status::HTTP_OK => ffi::HTTP_OK,
-            Status::HTTP_CREATED => ffi::HTTP_CREATED,
-            Status::HTTP_ACCEPTED => ffi::HTTP_ACCEPTED,
-            Status::HTTP_NON_AUTHORITATIVE => ffi::HTTP_NON_AUTHORITATIVE,
-            Status::HTTP_NO_CONTENT => ffi::HTTP_NO_CONTENT,
-            Status::HTTP_RESET_CONTENT => ffi::HTTP_RESET_CONTENT,
-            Status::HTTP_PARTIAL_CONTENT => ffi::HTTP_PARTIAL_CONTENT,
-            Status::HTTP_MULTI_STATUS => ffi::HTTP_MULTI_STATUS,
-            Status::HTTP_ALREADY_REPORTED => ffi::HTTP_ALREADY_REPORTED,
-            Status::HTTP_IM_USED => ffi::HTTP_IM_USED,
-            Status::HTTP_MULTIPLE_CHOICES => ffi::HTTP_MULTIPLE_CHOICES,
-            Status::HTTP_MOVED_PERMANENTLY => ffi::HTTP_MOVED_PERMANENTLY,
-            Status::HTTP_MOVED_TEMPORARILY => ffi::HTTP_MOVED_TEMPORARILY,
-            Status::HTTP_SEE_OTHER => ffi::HTTP_SEE_OTHER,
-            Status::HTTP_NOT_MODIFIED => ffi::HTTP_NOT_MODIFIED,
-            Status::HTTP_USE_PROXY => ffi::HTTP_USE_PROXY,
-            Status::HTTP_TEMPORARY_REDIRECT => ffi::HTTP_TEMPORARY_REDIRECT,
-            Status::HTTP_PERMANENT_REDIRECT => ffi::HTTP_PERMANENT_REDIRECT,
-            Status::HTTP_BAD_REQUEST => ffi::HTTP_BAD_REQUEST,
-            Status::HTTP_UNAUTHORIZED => ffi::HTTP_UNAUTHORIZED,
-            Status::HTTP_PAYMENT_REQUIRED => ffi::HTTP_PAYMENT_REQUIRED,
-            Status::HTTP_FORBIDDEN => ffi::HTTP_FORBIDDEN,
-            Status::HTTP_NOT_FOUND => ffi::HTTP_NOT_FOUND,
-            Status::HTTP_METHOD_NOT_ALLOWED => ffi::HTTP_METHOD_NOT_ALLOWED,
-            Status::HTTP_NOT_ACCEPTABLE => ffi::HTTP_NOT_ACCEPTABLE,
-            Status::HTTP_PROXY_AUTHENTICATION_REQUIRED => ffi::HTTP_PROXY_AUTHENTICATION_REQUIRED,
-            Status::HTTP_REQUEST_TIME_OUT => ffi::HTTP_REQUEST_TIME_OUT,
-            Status::HTTP_CONFLICT => ffi::HTTP_CONFLICT,
-            Status::HTTP_GONE => ffi::HTTP_GONE,
-            Status::HTTP_LENGTH_REQUIRED => ffi::HTTP_LENGTH_REQUIRED,
-            Status::HTTP_PRECONDITION_FAILED => ffi::HTTP_PRECONDITION_FAILED,
-            Status::HTTP_REQUEST_ENTITY_TOO_LARGE => ffi::HTTP_REQUEST_ENTITY_TOO_LARGE,
-            Status::HTTP_REQUEST_URI_TOO_LARGE => ffi::HTTP_REQUEST_URI_TOO_LARGE,
-            Status::HTTP_UNSUPPORTED_MEDIA_TYPE => ffi::HTTP_UNSUPPORTED_MEDIA_TYPE,
-            Status::HTTP_RANGE_NOT_SATISFIABLE => ffi::HTTP_RANGE_NOT_SATISFIABLE,
-            Status::HTTP_EXPECTATION_FAILED => ffi::HTTP_EXPECTATION_FAILED,
-            Status::HTTP_IM_A_TEAPOT => ffi::HTTP_IM_A_TEAPOT,
-            Status::HTTP_UNPROCESSABLE_ENTITY => ffi::HTTP_UNPROCESSABLE_ENTITY,
-            Status::HTTP_LOCKED => ffi::HTTP_LOCKED,
-            Status::HTTP_FAILED_DEPENDENCY => ffi::HTTP_FAILED_DEPENDENCY,
-            Status::HTTP_UPGRADE_REQUIRED => ffi::HTTP_UPGRADE_REQUIRED,
-            Status::HTTP_PRECONDITION_REQUIRED => ffi::HTTP_PRECONDITION_REQUIRED,
-            Status::HTTP_TOO_MANY_REQUESTS => ffi::HTTP_TOO_MANY_REQUESTS,
-            Status::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE => {
-                ffi::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE
+            Status::HTTP_CONTINUE => ffi::HTTP_CONTINUE as c_int,
+            Status::HTTP_SWITCHING_PROTOCOLS => ffi::HTTP_SWITCHING_PROTOCOLS as c_int,
+            Status::HTTP_PROCESSING => ffi::HTTP_PROCESSING as c_int,
+            Status::HTTP_OK => ffi::HTTP_OK as c_int,
+            Status::HTTP_CREATED => ffi::HTTP_CREATED as c_int,
+            Status::HTTP_ACCEPTED => ffi::HTTP_ACCEPTED as c_int,
+            Status::HTTP_NON_AUTHORITATIVE => ffi::HTTP_NON_AUTHORITATIVE as c_int,
+            Status::HTTP_NO_CONTENT => ffi::HTTP_NO_CONTENT as c_int,
+            Status::HTTP_RESET_CONTENT => ffi::HTTP_RESET_CONTENT as c_int,
+            Status::HTTP_PARTIAL_CONTENT => ffi::HTTP_PARTIAL_CONTENT as c_int,
+            Status::HTTP_MULTI_STATUS => ffi::HTTP_MULTI_STATUS as c_int,
+            Status::HTTP_ALREADY_REPORTED => ffi::HTTP_ALREADY_REPORTED as c_int,
+            Status::HTTP_IM_USED => ffi::HTTP_IM_USED as c_int,
+            Status::HTTP_MULTIPLE_CHOICES => ffi::HTTP_MULTIPLE_CHOICES as c_int,
+            Status::HTTP_MOVED_PERMANENTLY => ffi::HTTP_MOVED_PERMANENTLY as c_int,
+            Status::HTTP_MOVED_TEMPORARILY => ffi::HTTP_MOVED_TEMPORARILY as c_int,
+            Status::HTTP_SEE_OTHER => ffi::HTTP_SEE_OTHER as c_int,
+            Status::HTTP_NOT_MODIFIED => ffi::HTTP_NOT_MODIFIED as c_int,
+            Status::HTTP_USE_PROXY => ffi::HTTP_USE_PROXY as c_int,
+            Status::HTTP_TEMPORARY_REDIRECT => ffi::HTTP_TEMPORARY_REDIRECT as c_int,
+            Status::HTTP_PERMANENT_REDIRECT => ffi::HTTP_PERMANENT_REDIRECT as c_int,
+            Status::HTTP_BAD_REQUEST => ffi::HTTP_BAD_REQUEST as c_int,
+            Status::HTTP_UNAUTHORIZED => ffi::HTTP_UNAUTHORIZED as c_int,
+            Status::HTTP_PAYMENT_REQUIRED => ffi::HTTP_PAYMENT_REQUIRED as c_int,
+            Status::HTTP_FORBIDDEN => ffi::HTTP_FORBIDDEN as c_int,
+            Status::HTTP_NOT_FOUND => ffi::HTTP_NOT_FOUND as c_int,
+            Status::HTTP_METHOD_NOT_ALLOWED => ffi::HTTP_METHOD_NOT_ALLOWED as c_int,
+            Status::HTTP_NOT_ACCEPTABLE => ffi::HTTP_NOT_ACCEPTABLE as c_int,
+            Status::HTTP_PROXY_AUTHENTICATION_REQUIRED => {
+                ffi::HTTP_PROXY_AUTHENTICATION_REQUIRED as c_int
             }
-            Status::HTTP_INTERNAL_SERVER_ERROR => ffi::HTTP_INTERNAL_SERVER_ERROR,
-            Status::HTTP_NOT_IMPLEMENTED => ffi::HTTP_NOT_IMPLEMENTED,
-            Status::HTTP_BAD_GATEWAY => ffi::HTTP_BAD_GATEWAY,
-            Status::HTTP_SERVICE_UNAVAILABLE => ffi::HTTP_SERVICE_UNAVAILABLE,
-            Status::HTTP_GATEWAY_TIME_OUT => ffi::HTTP_GATEWAY_TIME_OUT,
-            Status::HTTP_VERSION_NOT_SUPPORTED => ffi::HTTP_VERSION_NOT_SUPPORTED,
-            Status::HTTP_VARIANT_ALSO_VARIES => ffi::HTTP_VARIANT_ALSO_VARIES,
-            Status::HTTP_INSUFFICIENT_STORAGE => ffi::HTTP_INSUFFICIENT_STORAGE,
-            Status::HTTP_LOOP_DETECTED => ffi::HTTP_LOOP_DETECTED,
-            Status::HTTP_NOT_EXTENDED => ffi::HTTP_NOT_EXTENDED,
+            Status::HTTP_REQUEST_TIME_OUT => ffi::HTTP_REQUEST_TIME_OUT as c_int,
+            Status::HTTP_CONFLICT => ffi::HTTP_CONFLICT as c_int,
+            Status::HTTP_GONE => ffi::HTTP_GONE as c_int,
+            Status::HTTP_LENGTH_REQUIRED => ffi::HTTP_LENGTH_REQUIRED as c_int,
+            Status::HTTP_PRECONDITION_FAILED => ffi::HTTP_PRECONDITION_FAILED as c_int,
+            Status::HTTP_REQUEST_ENTITY_TOO_LARGE => ffi::HTTP_REQUEST_ENTITY_TOO_LARGE as c_int,
+            Status::HTTP_REQUEST_URI_TOO_LARGE => ffi::HTTP_REQUEST_URI_TOO_LARGE as c_int,
+            Status::HTTP_UNSUPPORTED_MEDIA_TYPE => ffi::HTTP_UNSUPPORTED_MEDIA_TYPE as c_int,
+            Status::HTTP_RANGE_NOT_SATISFIABLE => ffi::HTTP_RANGE_NOT_SATISFIABLE as c_int,
+            Status::HTTP_EXPECTATION_FAILED => ffi::HTTP_EXPECTATION_FAILED as c_int,
+            Status::HTTP_UNPROCESSABLE_ENTITY => ffi::HTTP_UNPROCESSABLE_ENTITY as c_int,
+            Status::HTTP_LOCKED => ffi::HTTP_LOCKED as c_int,
+            Status::HTTP_FAILED_DEPENDENCY => ffi::HTTP_FAILED_DEPENDENCY as c_int,
+            Status::HTTP_UPGRADE_REQUIRED => ffi::HTTP_UPGRADE_REQUIRED as c_int,
+            Status::HTTP_PRECONDITION_REQUIRED => ffi::HTTP_PRECONDITION_REQUIRED as c_int,
+            Status::HTTP_TOO_MANY_REQUESTS => ffi::HTTP_TOO_MANY_REQUESTS as c_int,
+            Status::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE => {
+                ffi::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE as c_int
+            }
+            Status::HTTP_INTERNAL_SERVER_ERROR => ffi::HTTP_INTERNAL_SERVER_ERROR as c_int,
+            Status::HTTP_NOT_IMPLEMENTED => ffi::HTTP_NOT_IMPLEMENTED as c_int,
+            Status::HTTP_BAD_GATEWAY => ffi::HTTP_BAD_GATEWAY as c_int,
+            Status::HTTP_SERVICE_UNAVAILABLE => ffi::HTTP_SERVICE_UNAVAILABLE as c_int,
+            Status::HTTP_GATEWAY_TIME_OUT => ffi::HTTP_GATEWAY_TIME_OUT as c_int,
+            Status::HTTP_VERSION_NOT_SUPPORTED => ffi::HTTP_VERSION_NOT_SUPPORTED as c_int,
+            Status::HTTP_VARIANT_ALSO_VARIES => ffi::HTTP_VARIANT_ALSO_VARIES as c_int,
+            Status::HTTP_INSUFFICIENT_STORAGE => ffi::HTTP_INSUFFICIENT_STORAGE as c_int,
+            Status::HTTP_LOOP_DETECTED => ffi::HTTP_LOOP_DETECTED as c_int,
+            Status::HTTP_NOT_EXTENDED => ffi::HTTP_NOT_EXTENDED as c_int,
             Status::HTTP_NETWORK_AUTHENTICATION_REQUIRED => {
-                ffi::HTTP_NETWORK_AUTHENTICATION_REQUIRED
+                ffi::HTTP_NETWORK_AUTHENTICATION_REQUIRED as c_int
             }
             Status::HTTP_UNKNOWN(i) => i,
         }
@@ -226,10 +226,20 @@ impl Into<c_int> for Status {
 impl Into<Status> for c_int {
     fn into(self) -> Status {
         match self {
+            ffi::DECLINED => return Status::DECLINED,
+            ffi::DONE => return Status::DONE,
+            ffi::SUSPENDED => return Status::SUSPENDED,
+            _ => {}
+        }
+
+        if self.is_negative() {
+            return Status::HTTP_UNKNOWN(self);
+        }
+
+        let casted = self as u32;
+
+        match casted {
             ffi::OK => Status::OK,
-            ffi::DECLINED => Status::DECLINED,
-            ffi::DONE => Status::DONE,
-            ffi::SUSPENDED => Status::SUSPENDED,
 
             ffi::HTTP_CONTINUE => Status::HTTP_CONTINUE,
             ffi::HTTP_SWITCHING_PROTOCOLS => Status::HTTP_SWITCHING_PROTOCOLS,
@@ -270,7 +280,6 @@ impl Into<Status> for c_int {
             ffi::HTTP_UNSUPPORTED_MEDIA_TYPE => Status::HTTP_UNSUPPORTED_MEDIA_TYPE,
             ffi::HTTP_RANGE_NOT_SATISFIABLE => Status::HTTP_RANGE_NOT_SATISFIABLE,
             ffi::HTTP_EXPECTATION_FAILED => Status::HTTP_EXPECTATION_FAILED,
-            ffi::HTTP_IM_A_TEAPOT => Status::HTTP_IM_A_TEAPOT,
             ffi::HTTP_UNPROCESSABLE_ENTITY => Status::HTTP_UNPROCESSABLE_ENTITY,
             ffi::HTTP_LOCKED => Status::HTTP_LOCKED,
             ffi::HTTP_FAILED_DEPENDENCY => Status::HTTP_FAILED_DEPENDENCY,
@@ -293,8 +302,7 @@ impl Into<Status> for c_int {
             ffi::HTTP_NETWORK_AUTHENTICATION_REQUIRED => {
                 Status::HTTP_NETWORK_AUTHENTICATION_REQUIRED
             }
-            i if i >= 100 => Status::HTTP_UNKNOWN(i),
-            _ => Status::DECLINED,
+            _ => Status::HTTP_UNKNOWN(casted as c_int),
         }
     }
 }
@@ -306,9 +314,21 @@ pub enum ProxyReq {
     RESPONSE, // Origin response
 }
 
-impl From<c_int> for ProxyReq {
-    fn from(c_int: c_int) -> ProxyReq {
-        match c_int {
+impl From<ProxyReq> for c_int {
+    fn from(proxy_req: ProxyReq) -> c_int {
+        match proxy_req {
+            ProxyReq::NONE => ffi::PROXYREQ_NONE as c_int,
+            ProxyReq::PROXY => ffi::PROXYREQ_PROXY as c_int,
+            ProxyReq::REVERSE => ffi::PROXYREQ_REVERSE as c_int,
+            ProxyReq::RESPONSE => ffi::PROXYREQ_RESPONSE as c_int,
+        }
+    }
+}
+
+impl Into<ProxyReq> for c_int {
+    fn into(self) -> ProxyReq {
+        let casted = self as u32;
+        match casted {
             ffi::PROXYREQ_NONE => ProxyReq::NONE,
             ffi::PROXYREQ_PROXY => ProxyReq::PROXY,
             ffi::PROXYREQ_REVERSE => ProxyReq::REVERSE,
@@ -341,9 +361,9 @@ pub enum ReadPolicy {
 impl From<ReadPolicy> for c_int {
     fn from(read_policy: ReadPolicy) -> c_int {
         match read_policy {
-            ReadPolicy::REQUEST_NO_BODY => ffi::READ_POLICY_REQUEST_NO_BODY,
-            ReadPolicy::REQUEST_CHUNKED_ERROR => ffi::READ_POLICY_REQUEST_CHUNKED_ERROR,
-            ReadPolicy::REQUEST_CHUNKED_DECHUNK => ffi::READ_POLICY_REQUEST_CHUNKED_DECHUNK,
+            ReadPolicy::REQUEST_NO_BODY => 0,
+            ReadPolicy::REQUEST_CHUNKED_ERROR => 1,
+            ReadPolicy::REQUEST_CHUNKED_DECHUNK => 2,
         }
     }
 }
@@ -413,7 +433,15 @@ impl Request {
     str_getter!(content_type);
 
     pub fn set_content_type<T: Into<Vec<u8>>>(&self, ct: T) {
-        let c_str = ffi::strdup(field!(self, pool), ct);
+        let bytes = ct.into();
+
+        let c_str = unsafe {
+            ffi::apr_pstrmemdup(
+                field!(self, pool),
+                bytes.as_ptr() as *const c_char,
+                bytes.len() as ffi::apr_size_t,
+            )
+        };
 
         unsafe {
             ffi::ap_set_content_type(self.ptr, c_str);
@@ -488,7 +516,7 @@ impl Request {
         }
     }
 
-    pub fn get_client_block(&self, buffer_ptr: *mut i8, bufsize: u64) -> Result<i64, ()> {
+    pub fn get_client_block(&self, buffer_ptr: *mut i8, bufsize: usize) -> Result<i64, ()> {
         let result = unsafe { ffi::ap_get_client_block(self.ptr, buffer_ptr, bufsize) };
         Ok(result)
     }
@@ -662,8 +690,9 @@ impl Request {
     }
 
     pub fn rfc822_date<'a>(&self, t: i64) -> Result<&'a str, ()> {
-        let date: *mut c_char =
-            unsafe { ffi::apr_palloc(field!(self, pool), ffi::APR_RFC822_DATE_LEN) as *mut c_char };
+        let date: *mut c_char = unsafe {
+            ffi::apr_palloc(field!(self, pool), ffi::APR_RFC822_DATE_LEN as usize) as *mut c_char
+        };
 
         unsafe {
             ffi::apr_rfc822_date(date, t);

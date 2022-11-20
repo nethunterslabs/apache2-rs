@@ -1,9 +1,12 @@
 [package]
-
 name = "apache2"
-version = "0.0.2"
+version = "0.0.3"
+edition = "2021"
+publish = false
+
+[build-dependencies]
+bindgen = "0.62.0"
 
 [dependencies]
-libc = "0.2.118"
-memchr = "2.4.1"
+memchr = "2.5.0"
 #interpolate_idents = "0.2.1"

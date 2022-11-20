@@ -1,7 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use libc::c_char;
-use std::ffi::CStr;
+use std::ffi::{c_char, CStr};
 use std::str;
 
 pub trait FromRaw<T>: Sized {

@@ -1,12 +1,13 @@
 #![allow(non_camel_case_types)]
 #![allow(clippy::result_unit_err)]
 
-use std::ffi::CString;
+use std::ffi::{c_int, CString};
 use std::marker::PhantomData;
 
-use ffi;
-
-use wrapper::{from_char_ptr, FromRaw, WrappedType, Wrapper};
+use crate::{
+    ffi,
+    wrapper::{from_char_ptr, FromRaw, WrappedType, Wrapper},
+};
 
 pub enum HookOrder {
     REALLY_FIRST, // run this hook first, before ANYTHING
@@ -16,14 +17,14 @@ pub enum HookOrder {
     REALLY_LAST,  // run this hook last, after EVERYTHING
 }
 
-impl Into<libc::c_int> for HookOrder {
-    fn into(self) -> libc::c_int {
+impl Into<c_int> for HookOrder {
+    fn into(self) -> c_int {
         match self {
-            HookOrder::REALLY_FIRST => ffi::APR_HOOK_REALLY_FIRST,
-            HookOrder::FIRST => ffi::APR_HOOK_FIRST,
-            HookOrder::MIDDLE => ffi::APR_HOOK_MIDDLE,
-            HookOrder::LAST => ffi::APR_HOOK_LAST,
-            HookOrder::REALLY_LAST => ffi::APR_HOOK_REALLY_LAST,
+            HookOrder::REALLY_FIRST => ffi::APR_HOOK_REALLY_FIRST as c_int,
+            HookOrder::FIRST => ffi::APR_HOOK_FIRST as c_int,
+            HookOrder::MIDDLE => ffi::APR_HOOK_MIDDLE as c_int,
+            HookOrder::LAST => ffi::APR_HOOK_LAST as c_int,
+            HookOrder::REALLY_LAST => ffi::APR_HOOK_REALLY_LAST as c_int,
         }
     }
 }
@@ -171,12 +172,12 @@ impl AprBucket {
     pub fn read(
         &self,
         str: *mut *const i8,
-        len: *mut u64,
+        len: *mut usize,
         block: ffi::apr_read_type_e,
     ) -> Result<i32, ()> {
         unsafe {
             let bucket = *self.ptr;
-            if let Some(bucket_type) = bucket._type.as_ref() {
+            if let Some(bucket_type) = bucket.type_.as_ref() {
                 if let Some(read) = bucket_type.read {
                     let result = read(self.ptr, str, len, block);
                     return Ok(result);

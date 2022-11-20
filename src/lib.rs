@@ -1,7 +1,8 @@
 //#![feature(plugin)]
 //#![plugin(interpolate_idents)]
-
-extern crate libc;
+#![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
+#![allow(non_snake_case)]
 
 pub mod apr;
 pub mod cookie;
@@ -9,25 +10,19 @@ pub mod ffi;
 pub mod httpd;
 pub mod wrapper;
 
-pub use libc::{c_char, c_int, c_void};
+use std::ffi::{c_char, c_int};
 
+pub use apr::{apr_version_string, apu_version_string, time_now, AprBucket, HookOrder, Pool};
+pub use cookie::Cookie;
+pub use ffi::{
+    ACCESS_CONF, EXEC_ON_READ, NONFATAL_ALL, NONFATAL_OVERRIDE, NONFATAL_UNKNOWN, OR_ALL,
+    OR_AUTHCFG, OR_FILEINFO, OR_INDEXES, OR_LIMIT, OR_NONE, OR_OPTIONS, OR_UNSET, RSRC_CONF,
+};
 pub use httpd::{
     server_banner, server_built, server_description, show_mpm, CmdParms, ConfVector, ProxyReq,
     ReadPolicy, Request, Server, Status,
 };
-
-pub use apr::{apr_version_string, apu_version_string, time_now, AprBucket, HookOrder, Pool};
-
-pub use cookie::Cookie;
-
 pub use wrapper::{from_char_ptr, CStrBuf, FromRaw, WrappedType};
-
-pub use ffi::{
-    ACCESS_CONF, EXEC_ON_READ, FLAG, ITERATE, ITERATE2, NONFATAL_ALL, NONFATAL_OVERRIDE,
-    NONFATAL_UNKNOWN, NO_ARGS, OR_ALL, OR_AUTHCFG, OR_FILEINFO, OR_INDEXES, OR_LIMIT, OR_NONE,
-    OR_OPTIONS, OR_UNSET, RAW_ARGS, RSRC_CONF, TAKE1, TAKE12, TAKE123, TAKE13, TAKE2, TAKE23,
-    TAKE3, TAKE_ARGV,
-};
 
 pub type StringType<'a> = &'a str;
 pub type CStringType = *const c_char;
